@@ -13,11 +13,19 @@ config_version=5
 config/name="Run!"
 run/main_scene="uid://ba4m0xgo5l8jw"
 config/features=PackedStringArray("4.5", "Forward Plus")
-config/icon="res://icon.svg"
 
 [dotnet]
 
 project/assembly_name="Run!"
+
+[file_customization]
+
+folder_colors={
+"res://Scenes/": "yellow",
+"res://Scripts/": "blue",
+"res://Sounds/": "green",
+"res://Textures/": "red"
+}
 
 [input]
 
