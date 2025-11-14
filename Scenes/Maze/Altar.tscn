@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://bb3yf22v2asee"]
+
+[node name="Altar" type="Node3D"]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]

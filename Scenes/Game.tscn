@@ -1,10 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://ba4m0xgo5l8jw"]
+[gd_scene load_steps=11 format=3 uid="uid://ba4m0xgo5l8jw"]
 
 [ext_resource type="Script" uid="uid://e1wsmpwyvwo0" path="res://Scripts/Game.gd" id="1_b2bpf"]
 [ext_resource type="Script" uid="uid://cbaimku75aaqw" path="res://Scripts/Maze.gd" id="2_7lihs"]
+[ext_resource type="PackedScene" uid="uid://bb3yf22v2asee" path="res://Scenes/Maze/Altar.tscn" id="2_fgofq"]
 [ext_resource type="PackedScene" uid="uid://br0k4crwiihc6" path="res://Scenes/Maze/Wall.tscn" id="3_fgofq"]
 [ext_resource type="PackedScene" uid="uid://ccgejc2y04bcy" path="res://Scenes/Maze/Floor.tscn" id="4_2irst"]
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://Scenes/Proto_controller.tscn" id="5_bf53h"]
+[ext_resource type="PackedScene" uid="uid://b05uie7f3wlf3" path="res://Scenes/Maze/ExitCorridor.tscn" id="7_fgofq"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xkndl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -21,6 +23,8 @@ glow_enabled = true
 
 [node name="Game" type="Node3D"]
 script = ExtResource("1_b2bpf")
+altar_scene = ExtResource("2_fgofq")
+exit_corridor_scene = ExtResource("7_fgofq")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_u44n3")
@@ -31,3 +35,5 @@ wall_scene = ExtResource("3_fgofq")
 floor_scene = ExtResource("4_2irst")
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("5_bf53h")]
+
+[node name="ExitCorridor" parent="." instance=ExtResource("7_fgofq")]
