@@ -3,10 +3,14 @@ class_name Maze
 
 @export var width: int = 21   # DEBE ser impar (21, 31, 41...)
 @export var height: int = 21  # DEBE ser impar
-@export var cell_size: float = 2.0
+@export var cell_size: float = 6.0  # tamaño físico de cada celda en el mundo 3D
 
 @export var wall_scene: PackedScene
 @export var floor_scene: PackedScene
+
+# Altura y grosor de paredes (en unidades del mundo)
+@export var wall_height: float = 4.0
+@export var wall_thickness: float = 6.0  # normalmente igual a cell_size para bloques completos
 
 var grid: Array = []      # grid[y][x] = 0 (pared) o 1 (pasillo)
 var start_cell: Vector2i = Vector2i(1, 1)
@@ -83,37 +87,41 @@ func _carve_exit() -> void:
 	grid[exit_cell.y][exit_cell.x] = 1
 
 	# Abrimos un hueco en la pared exterior derecha junto a esa celda
-	# (celda de borde en x = width - 1)
 	grid[exit_cell.y][width - 1] = 1
-
-	# Si prefieres abrir por abajo en lugar de por la derecha,
-	# podrías usar esta línea alternativa:
+	# Si prefieres abrir por abajo en vez de por la derecha, puedes usar:
 	# grid[height - 1][exit_cell.x] = 1
 
+# ---------------------------------------------------------
+# Construir geometría 3D
+# ---------------------------------------------------------
 func _build_maze() -> void:
+	var total_width: float = float(width) * cell_size
+	var total_height: float = float(height) * cell_size
+
 	# 1) Suelo grande
 	if floor_scene:
 		var floor_instance = floor_scene.instantiate()
 		add_child(floor_instance)
 
-		var total_width: float = float(width) * cell_size
-		var total_height: float = float(height) * cell_size
-
 		# Posicionamos el suelo en el centro del laberinto
 		floor_instance.position = Vector3(total_width * 0.5, -0.5, total_height * 0.5)
-		# Como el root es un CSGBox3D, tiene propiedad "size", la seteamos vía set() para evitar problemas de tipos
+		# Ajustamos el tamaño si es un CSGBox3D
 		floor_instance.set("size", Vector3(total_width, 1.0, total_height))
 
-	# 2) Paredes
+	# 2) Paredes (bloques completos en las celdas grid[y][x] == 0)
 	if wall_scene:
 		for y in height:
 			for x in width:
 				if grid[y][x] == 0:
 					var wall_instance = wall_scene.instantiate()
 					add_child(wall_instance)
+
 					var wx: float = float(x) * cell_size
 					var wz: float = float(y) * cell_size
-					wall_instance.position = Vector3(wx, 0.0, wz)
+
+					wall_instance.position = Vector3(wx, wall_height * 0.5, wz)
+					# Ajustamos tamaño del bloque de pared según cell_size y parámetros
+					wall_instance.set("size", Vector3(wall_thickness, wall_height, wall_thickness))
 
 # ---------------------------------------------------------
 # Helpers para posiciones
