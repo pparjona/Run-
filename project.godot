@@ -29,7 +29,12 @@ folder_colors={
 
 [global_group]
 
+<<<<<<< Updated upstream
 GunPickup=""
+=======
+Enemy=""
+Player=""
+>>>>>>> Stashed changes
 
 [input]
 
