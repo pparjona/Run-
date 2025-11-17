@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bs72ogkvdd7d6"]
+[gd_scene load_steps=6 format=3 uid="uid://bs72ogkvdd7d6"]
 
 [ext_resource type="Script" uid="uid://bhwc16c8hxhrr" path="res://Scripts/Proto_controller.gd" id="1_ucva2"]
 
@@ -12,6 +12,9 @@ height = 1.8
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iof21"]
 radius = 0.4
 height = 1.8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0i1f7"]
+size = Vector3(1.9, 1.5, 1.9)
 
 [node name="ProtoController" type="CharacterBody3D"]
 script = ExtResource("1_ucva2")
@@ -32,3 +35,15 @@ shape = SubResource("CapsuleShape3D_iof21")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
+
+[node name="EquipedGun" type="Node3D" parent="Head/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19462585, -0.3906331, -0.8607975)
+
+[node name="PickUpDetector" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickUpDetector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0015029907, 1.0137687, 0.0021348)
+shape = SubResource("BoxShape3D_0i1f7")
+
+[connection signal="area_entered" from="PickUpDetector" to="." method="_on_pick_up_detector_area_entered"]
+[connection signal="area_exited" from="PickUpDetector" to="." method="_on_pick_up_detector_area_exited"]

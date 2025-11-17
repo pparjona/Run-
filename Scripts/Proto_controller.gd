@@ -3,11 +3,6 @@
 
 extends CharacterBody3D
 
-# -------------------------------
-# NUEVAS VARIABLES PARA FREEFLY
-# -------------------------------
-var fly_speed: float = 10.0   # velocidad vertical en freefly
-
 ## Can we move around?
 @export var can_move : bool = true
 ## Are we affected by gravity?
@@ -46,16 +41,38 @@ var fly_speed: float = 10.0   # velocidad vertical en freefly
 @export var input_sprint : String = "sprint"
 ## Name of Input Action to toggle freefly mode.
 @export var input_freefly : String = "freefly"
+# --- AÑADIDO ---
+## Name of Input Action to Shoot.
+@export var input_shoot : String = "shoot"
+## Name of Input Action to Pickup.
+@export var input_pickup : String = "pickup"
+
 
 # ----- VARIABLES -----
 var mouse_captured : bool = false
 var look_rotation : Vector2
 var move_speed : float = 0.0
-var freeflying : bool = false  # <- modo noclip activado/desactivado
+var freeflying : bool = false
+
+# --- AÑADIDO ---
+# Carga las escenas. ¡¡ASEGÚRATE DE QUE ESTAS RUTAS SEAN CORRECTAS!!
+const BULLET_SCENE = preload("res://Scenes/bullet.tscn")
+const EQUIPPED_GUN_SCENE = preload("res://Scenes/equiped_gun.tscn")
+
+# Estado del arma
+var has_gun = false
+var gun_pickup_in_range = null # Guarda el arma que podemos recoger
+
 
 # REFERENCES
 @onready var head: Node3D = $Head
 @onready var collider: CollisionShape3D = $Collider
+# --- AÑADIDO ---
+# ¡Asegúrate de que estos nodos existen en tu escena ProtoController
+# con estas rutas exactas!
+@onready var gun_holder = $Head/Camera3D/EquipedGun
+@onready var pickup_detector = $PickUpDetector
+
 
 # ---------------------------------------
 # READY
@@ -65,10 +82,34 @@ func _ready() -> void:
 	look_rotation.y = rotation.y
 	look_rotation.x = head.rotation.x
 	capture_mouse()
+	
+	# Configura el detector para que detecte 'Areas' (monitorING)
+	# pero no sea detectado por otros (monitorABLE)
+	pickup_detector.monitoring = true 
+	pickup_detector.monitorable = false
 
 # ---------------------------------------
 # INPUT
 # ---------------------------------------
+
+# --- AÑADIDO ---
+# Esta función se usa para acciones de juego (como disparar o recoger)
+func _input(event: InputEvent) -> void:
+	# No procesar disparos o recogidas si estamos en modo noclip
+	# (Evita conflicto con 'E' para subir en noclip y 'E' para recoger)
+	if freeflying:
+		return
+
+	# Lógica de Disparar
+	if event.is_action_pressed(input_shoot):
+		shoot()
+	
+	# Lógica de Recoger
+	# Si presionamos "pickup" Y hay un arma en rango Y no tenemos ya un arma...
+	if event.is_action_pressed(input_pickup) and gun_pickup_in_range != null and not has_gun:
+		equip_gun(gun_pickup_in_range)
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	# Mouse capturing
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
@@ -103,7 +144,7 @@ func _physics_process(delta: float) -> void:
 		motion *= freefly_speed * delta
 
 		# movimiento vertical en noclip
-		if Input.is_key_pressed(KEY_E):   # subir
+		if Input.is_key_pressed(KEY_E):  # subir
 			motion.y = freefly_speed * delta
 		elif Input.is_key_pressed(KEY_Q): # bajar
 			motion.y = -freefly_speed * delta
@@ -208,3 +249,83 @@ func check_input_mappings():
 	if can_freefly and not InputMap.has_action(input_freefly):
 		push_error("Freefly disabled. Missing input_freefly: " + input_freefly)
 		can_freefly = false
+		
+	# --- Gun ---
+	if not InputMap.has_action(input_shoot):
+		push_error("Shooting disabled. Missing input_shoot: " + input_shoot)
+	if not InputMap.has_action(input_pickup):
+		push_error("Pickup disabled. Missing input_pickup: " + input_pickup)
+
+
+# ----------------------------------------------------
+#  FUNCIONES DE ARMAS
+# ----------------------------------------------------
+
+func equip_gun(gun_pickup_object):
+	# Marcar que tenemos el arma
+	has_gun = true
+	
+	# Destruir el arma del suelo
+	gun_pickup_object.queue_free()
+	
+	# Ya no está en rango (porque la hemos borrado)
+	gun_pickup_in_range = null
+	
+	# Crear la instancia del arma equipada
+	var equipped_gun = EQUIPPED_GUN_SCENE.instantiate()
+	
+	# Añadirla al 'GunHolder'
+	gun_holder.add_child(equipped_gun)
+	print("¡Arma equipada!")
+
+
+func shoot():
+	# ¡COMPROBACIÓN CLAVE!
+	# Si no tenemos arma, no podemos disparar
+	if not has_gun:
+		print("No tengo arma")
+		return
+
+	# Obtener el arma y su cañón (Muzzle)
+	# Asumimos que el arma es el primer hijo del GunHolder
+	var equipped_gun = gun_holder.get_child(0)
+	if equipped_gun == null:
+		return # No hay arma equipada (por si acaso)
+		
+	var muzzle = equipped_gun.get_node("Muzzle")
+	if muzzle == null:
+		print("ERROR: El arma equipada no tiene nodo 'Muzzle'")
+		return
+
+	# Crea una instancia (una copia) de la escena de la bala
+	var bullet = BULLET_SCENE.instantiate()
+
+	# Obtiene la transformación global (posición y rotación) del Muzzle
+	var muzzle_transform = muzzle.global_transform
+	
+	# ¡Importante! Establece la dirección de la bala (eje Z negativo local)
+	bullet.direction = -muzzle_transform.basis.z.normalized()
+
+	# Añade la bala a la escena principal
+	get_tree().root.add_child(bullet)
+
+	# Establece la posición de la bala
+	bullet.global_transform.origin = muzzle_transform.origin
+
+# ----------------------------------------------------
+#  SEÑALES DE RECOGIDA
+# ----------------------------------------------------
+
+
+func _on_pick_up_detector_area_entered(area: Area3D) -> void:
+	# Si el objeto que entró está en el grupo "GunPickup"...
+	if area.is_in_group("GunPickup"):
+		gun_pickup_in_range = area
+		print("¡Puedes recoger un arma! (Presiona 'E')")
+
+
+func _on_pick_up_detector_area_exited(area: Area3D) -> void:
+		# Si el objeto que sale es el que teníamos guardado...
+	if area == gun_pickup_in_range:
+		gun_pickup_in_range = null
+		print("Arma fuera de rango")
