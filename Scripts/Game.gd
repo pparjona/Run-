@@ -3,6 +3,7 @@ extends Node3D
 @export var altar_scene: PackedScene
 @export var exit_corridor_scene: PackedScene
 @export var enemy_scene: PackedScene
+@export var gun_pickup_scene: PackedScene
 
 @onready var maze: Maze = $Maze
 @onready var player: Node3D = $Player
@@ -19,6 +20,13 @@ func _ready() -> void:
 
 		var altar_pos: Vector3 = maze.get_center_altar_position(0.0)
 		altar.global_position = altar_pos
+		
+		#Arma sobre el altar
+		if gun_pickup_scene:
+			var gun_pickup := gun_pickup_scene.instantiate()
+			altar.add_child(gun_pickup)
+			# Posición local encima del altar (ajusta la Y si hace falta)
+			gun_pickup.position = Vector3(0, 1.0, 0)
 
 	# 3) Instanciar el pasillo final con puerta
 	if exit_corridor_scene:
@@ -55,5 +63,5 @@ func _spawn_enemy_at_opposite_corner() -> void:#Encargada de crear al enemigo pr
 
 
 func _on_player_escaped() -> void:
-	print("Game: el jugador ha escapado. Aquí cambiamos de escena o mostramos fin de partida.")
-	# Más adelante: cambiar de escena, mostrar UI de victoria, etc.
+	print("Game: el jugador ha escapado.")
+	GameManager.on_player_escaped()

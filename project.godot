@@ -14,6 +14,10 @@ config/name="Run!"
 run/main_scene="uid://ba4m0xgo5l8jw"
 config/features=PackedStringArray("4.5", "Forward Plus")
 
+[autoload]
+
+GameManager="*res://Scripts/GameManager.gd"
+
 [dotnet]
 
 project/assembly_name="Run!"

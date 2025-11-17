@@ -54,6 +54,19 @@ var look_rotation : Vector2
 var move_speed : float = 0.0
 var freeflying : bool = false
 
+#VIDA Y FUTURA MUNICION EN PANTALLA
+@export var max_health: int = 100
+var health: int
+
+@export var max_ammo_in_clip: int = 0
+var current_ammo_in_clip: int = 0
+
+signal health_changed(current: int, max: int)
+signal player_died
+signal gun_equipped(has_gun: bool)
+signal ammo_changed(current: int, max: int) # preparado para el futuro
+
+
 # --- AÑADIDO ---
 # Carga las escenas. ¡¡ASEGÚRATE DE QUE ESTAS RUTAS SEAN CORRECTAS!!
 const BULLET_SCENE = preload("res://Scenes/bullet.tscn")
@@ -87,6 +100,15 @@ func _ready() -> void:
 	# pero no sea detectado por otros (monitorABLE)
 	pickup_detector.monitoring = true 
 	pickup_detector.monitorable = false
+	
+	#Iniciar vida y municion
+	health = max_health
+	health_changed.emit(health, max_health)
+
+	current_ammo_in_clip = max_ammo_in_clip
+	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
+
+	GameManager.register_player(self)
 
 # ---------------------------------------
 # INPUT
@@ -277,6 +299,10 @@ func equip_gun(gun_pickup_object):
 	# Añadirla al 'GunHolder'
 	gun_holder.add_child(equipped_gun)
 	print("¡Arma equipada!")
+	gun_equipped.emit(true)
+
+	# Cuando gestionéis munición real, aquí actualizaréis valores y emitiréis ammo_changed
+	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
 
 
 func shoot():
@@ -315,8 +341,6 @@ func shoot():
 # ----------------------------------------------------
 #  SEÑALES DE RECOGIDA
 # ----------------------------------------------------
-
-
 func _on_pick_up_detector_area_entered(area: Area3D) -> void:
 	# Si el objeto que entró está en el grupo "GunPickup"...
 	if area.is_in_group("GunPickup"):
@@ -329,3 +353,20 @@ func _on_pick_up_detector_area_exited(area: Area3D) -> void:
 	if area == gun_pickup_in_range:
 		gun_pickup_in_range = null
 		print("Arma fuera de rango")
+
+
+#Funcionalidad muerte y daño con Gamemanager
+func _on_player_died() -> void:
+	print("Jugador muerto")
+	GameManager.on_player_died()
+
+func take_damage(amount: int) -> void:
+	health -= amount
+	if health < 0:
+		health = 0
+
+	health_changed.emit(health, max_health)
+
+	if health == 0:
+		player_died.emit()
+		_on_player_died()
