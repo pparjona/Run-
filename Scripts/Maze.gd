@@ -22,6 +22,12 @@ var exit_cell: Vector2i = Vector2i(0, 0)
 var center_cell: Vector2i = Vector2i(0, 0) # centro de la “plaza”
 
 var walkable_cells: Array = []  # lista de celdas donde se puede caminar (grid == 1)
+var _path_dirs := [ #Direcciones del pathfinding
+	Vector2i(1, 0),
+	Vector2i(-1, 0),
+	Vector2i(0, 1),
+	Vector2i(0, -1)
+]
 
 func _ready() -> void:
 	_init_grid()
@@ -164,6 +170,82 @@ func _build_maze() -> void:
 					wall_instance.set("size", Vector3(wall_thickness, wall_height, wall_thickness))
 
 # ---------------------------------------------------------
+# Algoritmo de pathfinding
+# ---------------------------------------------------------
+func find_path_cells(start_cell: Vector2i, goal_cell: Vector2i) -> Array:
+	# Ajustar a celdas caminables cercanas
+	start_cell = _find_nearest_walkable(start_cell)
+	goal_cell = _find_nearest_walkable(goal_cell)
+	
+	if not _is_walkable(start_cell) or not _is_walkable(goal_cell):
+		return []
+
+	var queue: Array = []
+	queue.append(start_cell)
+	
+	var came_from: Dictionary = {}
+	came_from[start_cell] = start_cell
+
+	while not queue.is_empty():
+		var current: Vector2i = queue.pop_front()
+
+		if current == goal_cell:
+			break
+
+		for d in _path_dirs:
+			var next: Vector2i = current + d
+			if not _is_walkable(next):
+				continue
+			if came_from.has(next):
+				continue
+			
+			queue.append(next)
+			came_from[next] = current
+
+	if not came_from.has(goal_cell):
+		return []
+	
+	var path: Array = []
+	var cur: Vector2i = goal_cell
+	while true:
+		path.append(cur)
+		if cur == start_cell:
+			break
+		cur = came_from[cur]
+
+	path.reverse()
+	return path
+
+
+func _find_nearest_walkable(cell: Vector2i, max_radius: int = 2) -> Vector2i:
+	# Si ya es caminable, perfecto
+	if _is_walkable(cell):
+		return cell
+
+	# Buscar en anillos crecientes alrededor de la celda
+	for r in range(1, max_radius + 1):
+		for dy in range(-r, r + 1):
+			for dx in range(-r, r + 1):
+				var c := Vector2i(cell.x + dx, cell.y + dy)
+				if _is_walkable(c):
+					return c
+	# Si no hemos encontrado nada, devolvemos la original
+	return cell
+
+
+func get_path_world(start_world: Vector3, goal_world: Vector3, height_offset: float = 2.0) -> Array:
+	var start_cell := world_to_cell(start_world)
+	var goal_cell := world_to_cell(goal_world)
+
+	var cell_path: Array = find_path_cells(start_cell, goal_cell)
+	var world_path: Array = []
+
+	for c in cell_path:
+		world_path.append(cell_to_world(c, height_offset))
+
+	return world_path
+
+# ---------------------------------------------------------
 # Helpers para posiciones
 # ---------------------------------------------------------
 func get_player_start_position(height_offset: float = 2.0) -> Vector3:
@@ -191,12 +273,24 @@ func get_exit_corridor_origin(height_offset: float = 0.0) -> Vector3:
 	return Vector3(wx, height_offset, wz)
 
 func world_to_cell(world_pos: Vector3) -> Vector2i:
-	var x := int(round(world_pos.x / cell_size))
-	var y := int(round(world_pos.z / cell_size))
+	# Convertimos posición mundial a índice de celda aproximando
+	# al centro de la celda más cercana.
+	var x := int(floor(world_pos.x / cell_size + 0.5))
+	var y := int(floor(world_pos.z / cell_size + 0.5))
 	return Vector2i(x, y)
 
+
 func cell_to_world(cell: Vector2i, height_offset: float = 0.0) -> Vector3:
-	return Vector3(float(cell.x) * cell_size, height_offset, float(cell.y) * cell_size)
+	# Cada celda corresponde al centro (x * cell_size, z * cell_size)
+	var wx: float = float(cell.x) * cell_size
+	var wz: float = float(cell.y) * cell_size
+	return Vector3(wx, height_offset, wz)
+
+func _is_walkable(cell: Vector2i) -> bool:
+	if not _is_inside_grid(cell):
+		return false
+	return grid[cell.y][cell.x] == 1
+
 
 # ---------------------------------------------------------
 # Hooks públicos para futuros sistemas (enemigos, loot, etc.)

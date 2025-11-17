@@ -2,6 +2,7 @@ extends Node3D
 
 @export var altar_scene: PackedScene
 @export var exit_corridor_scene: PackedScene
+@export var enemy_scene: PackedScene
 
 @onready var maze: Maze = $Maze
 @onready var player: Node3D = $Player
@@ -34,6 +35,24 @@ func _ready() -> void:
 		# Conectar la señal player_escaped si existe
 		if corridor.has_signal("player_escaped"):
 			corridor.player_escaped.connect(_on_player_escaped)
+	# 4) Instanciar el enemigo en la esquina opuesta al jugador
+	_spawn_enemy_at_opposite_corner()
+
+func _spawn_enemy_at_opposite_corner() -> void:#Encargada de crear al enemigo principal
+	if enemy_scene == null:
+		return
+	var enemy := enemy_scene.instantiate()
+	add_child(enemy)
+	
+	# La esquina opuesta ya la estás usando como exit_cell,
+	# así que reutilizamos la posición interna de salida
+	var enemy_start: Vector3 = maze.get_exit_position(2.0)
+	enemy.global_position = enemy_start
+
+	# Pasar referencias de Player y Maze al enemigo
+	if enemy.has_method("set_target_and_maze"):
+		enemy.set_target_and_maze(player, maze)
+
 
 func _on_player_escaped() -> void:
 	print("Game: el jugador ha escapado. Aquí cambiamos de escena o mostramos fin de partida.")
