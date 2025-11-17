@@ -16,7 +16,7 @@ height = 1.8
 [sub_resource type="BoxShape3D" id="BoxShape3D_0i1f7"]
 size = Vector3(1.9, 1.5, 1.9)
 
-[node name="ProtoController" type="CharacterBody3D"]
+[node name="ProtoController" type="CharacterBody3D" groups=["Player"]]
 script = ExtResource("1_ucva2")
 can_sprint = true
 input_sprint = "Sprint"
