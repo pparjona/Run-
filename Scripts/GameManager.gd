@@ -5,8 +5,9 @@ enum GameState { MENU, PLAYING, PAUSED, GAME_OVER, VICTORY }
 var state: GameState = GameState.MENU
 
 # Rutas de escenas principales (se usarán más adelante)
-const MAIN_MENU_SCENE := "res://Scenes/MainMenu.tscn"
+const MAIN_MENU_SCENE := "res://Scenes/MenuUi.tscn"
 const GAME_SCENE      := "res://Scenes/Game.tscn"
+const SETTINGS_SCENE  := "res://Scenes/Settings.tscn"
 const END_SCENE       := "res://Scenes/EndScreen.tscn"
 
 # Ejemplo de datos globales que pueden interesar
@@ -37,10 +38,11 @@ func goto_menu() -> void:
 func start_game() -> void:
 	_change_scene(GAME_SCENE, GameState.PLAYING)
 
+func goto_settings() -> void:
+	_change_scene(SETTINGS_SCENE, GameState.MENU)
 
 func game_over() -> void:
 	_change_scene(END_SCENE, GameState.GAME_OVER)
-
 
 func game_won() -> void:
 	_change_scene(END_SCENE, GameState.VICTORY)
