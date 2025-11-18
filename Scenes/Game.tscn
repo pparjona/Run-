@@ -1,15 +1,17 @@
-[gd_scene load_steps=14 format=3 uid="uid://ba4m0xgo5l8jw"]
+[gd_scene load_steps=16 format=3 uid="uid://ba4m0xgo5l8jw"]
 
 [ext_resource type="Script" uid="uid://e1wsmpwyvwo0" path="res://Scripts/Game.gd" id="1_b2bpf"]
 [ext_resource type="Script" uid="uid://cbaimku75aaqw" path="res://Scripts/Maze.gd" id="2_7lihs"]
 [ext_resource type="PackedScene" uid="uid://bb3yf22v2asee" path="res://Scenes/Maze/Altar.tscn" id="2_fgofq"]
 [ext_resource type="PackedScene" uid="uid://br0k4crwiihc6" path="res://Scenes/Maze/Wall.tscn" id="3_fgofq"]
 [ext_resource type="PackedScene" uid="uid://ccgejc2y04bcy" path="res://Scenes/Maze/Floor.tscn" id="4_2irst"]
-[ext_resource type="PackedScene" uid="uid://bs2fue8r4bw2j" path="res://Scenes/Enemy.tscn" id="4_bf53h"]
+[ext_resource type="PackedScene" uid="uid://bs2fue8r4bw2j" path="res://Scenes/EnemyBoss.tscn" id="4_bf53h"]
 [ext_resource type="PackedScene" uid="uid://cu66yuh0yjyyb" path="res://Scenes/gun_pick_up.tscn" id="5_71axn"]
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://Scenes/Proto_controller.tscn" id="5_bf53h"]
 [ext_resource type="PackedScene" uid="uid://hpktclvvq00u" path="res://Scenes/HUD.tscn" id="6_71axn"]
 [ext_resource type="PackedScene" uid="uid://b05uie7f3wlf3" path="res://Scenes/Maze/ExitCorridor.tscn" id="7_fgofq"]
+[ext_resource type="PackedScene" uid="uid://frklwbf6lxbx" path="res://Scenes/EnemyNormal.tscn" id="10_71axn"]
+[ext_resource type="Script" uid="uid://cb65mhiyf4qix" path="res://Scenes/enemy_manager.gd" id="11_dahhg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xkndl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -27,8 +29,9 @@ glow_enabled = true
 [node name="Game" type="Node3D"]
 script = ExtResource("1_b2bpf")
 altar_scene = ExtResource("2_fgofq")
+boss_scene = ExtResource("4_bf53h")
+normal_enemy_scene = ExtResource("10_71axn")
 exit_corridor_scene = ExtResource("7_fgofq")
-enemy_scene = ExtResource("4_bf53h")
 gun_pickup_scene = ExtResource("5_71axn")
 
 [node name="Hud" parent="." instance=ExtResource("6_71axn")]
@@ -44,3 +47,9 @@ floor_scene = ExtResource("4_2irst")
 [node name="Player" parent="." instance=ExtResource("5_bf53h")]
 
 [node name="ExitCorridor" parent="." instance=ExtResource("7_fgofq")]
+
+[node name="EnemyManager" type="Node3D" parent="." node_paths=PackedStringArray("maze", "player")]
+script = ExtResource("11_dahhg")
+maze = NodePath("../Maze")
+player = NodePath("../Player")
+enemy_scene = ExtResource("10_71axn")

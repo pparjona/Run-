@@ -1,12 +1,14 @@
 extends Node3D
 
 @export var altar_scene: PackedScene
+@export var boss_scene: PackedScene                # Enemigo BOSS
+@export var normal_enemy_scene: PackedScene        # Enemigo NORMAL para oleadas
 @export var exit_corridor_scene: PackedScene
-@export var enemy_scene: PackedScene
-@export var gun_pickup_scene: PackedScene
+@export var gun_pickup_scene: PackedScene          # Pistola que aparece sobre el altar
 
 @onready var maze: Maze = $Maze
 @onready var player: Node3D = $Player
+@onready var enemy_manager: Node = $EnemyManager
 
 func _ready() -> void:
 	# 1) Colocar al jugador en la entrada del laberinto
@@ -15,53 +17,76 @@ func _ready() -> void:
 
 	# 2) Instanciar el altar en el centro de la plaza
 	if altar_scene:
-		var altar = altar_scene.instantiate()
+		var altar := altar_scene.instantiate()
 		add_child(altar)
 
 		var altar_pos: Vector3 = maze.get_center_altar_position(0.0)
 		altar.global_position = altar_pos
-		
-		#Arma sobre el altar
+
+		# 2.1) Arma sobre el altar
 		if gun_pickup_scene:
 			var gun_pickup := gun_pickup_scene.instantiate()
 			altar.add_child(gun_pickup)
 			# Posición local encima del altar (ajusta la Y si hace falta)
-			gun_pickup.position = Vector3(0, 1.0, 0)
+			gun_pickup.position = Vector3(0.0, 1.0, 0.0)
+
+		# 2.2) Conectar la señal para iniciar las oleadas cuando el player entra en la plaza
+		if altar.has_signal("player_entered_plaza"):
+			altar.player_entered_plaza.connect(_on_player_entered_plaza)
 
 	# 3) Instanciar el pasillo final con puerta
 	if exit_corridor_scene:
-		var corridor = exit_corridor_scene.instantiate()
+		var corridor := exit_corridor_scene.instantiate()
 		add_child(corridor)
 
 		# Origen del corredor justo fuera del laberinto, alineado con la salida
 		var origin_pos: Vector3 = maze.get_exit_corridor_origin(0.0)
-		origin_pos.x -= maze.cell_size * 0.5 #mover medio cell_size hacia dentro del laberinto
+		# Pequeño ajuste para que conecte mejor con el laberinto (medio cell_size hacia dentro)
+		origin_pos.x -= maze.cell_size * 0.5
 		corridor.global_position = origin_pos
-
-		# Si tu corridor no mira hacia +X, aquí puedes rotarlo (por ahora lo dejamos así)
 
 		# Conectar la señal player_escaped si existe
 		if corridor.has_signal("player_escaped"):
 			corridor.player_escaped.connect(_on_player_escaped)
-	# 4) Instanciar el enemigo en la esquina opuesta al jugador
-	_spawn_enemy_at_opposite_corner()
 
-func _spawn_enemy_at_opposite_corner() -> void:#Encargada de crear al enemigo principal
-	if enemy_scene == null:
+	# 4) Configurar EnemyManager (enemigos normales)
+	if enemy_manager:
+		# Si ya has asignado maze, player y enemy_scene en el inspector,
+		# esto sería opcional, pero no hace daño.
+		if enemy_manager.has_method("set"):
+			enemy_manager.set("maze", maze)
+			enemy_manager.set("player", player)
+			enemy_manager.set("enemy_scene", normal_enemy_scene)
+
+	# 5) Instanciar el BOSS inicial en la esquina opuesta (celda de salida interna)
+	_spawn_boss_at_opposite_corner()
+
+
+func _spawn_boss_at_opposite_corner() -> void:
+	if boss_scene == null:
 		return
-	var enemy := enemy_scene.instantiate()
-	add_child(enemy)
-	
+
+	var boss := boss_scene.instantiate()
+	add_child(boss)
+
 	# La esquina opuesta ya la estás usando como exit_cell,
 	# así que reutilizamos la posición interna de salida
-	var enemy_start: Vector3 = maze.get_exit_position(2.0)
-	enemy.global_position = enemy_start
+	var boss_start: Vector3 = maze.get_exit_position(2.0)
+	boss.global_position = boss_start
 
-	# Pasar referencias de Player y Maze al enemigo
-	if enemy.has_method("set_target_and_maze"):
-		enemy.set_target_and_maze(player, maze)
+	# Pasar referencias de Player y Maze al boss
+	if boss.has_method("set_target_and_maze"):
+		boss.set_target_and_maze(player, maze)
+
+
+func _on_player_entered_plaza() -> void:
+	print("Game: el jugador ha llegado a la plaza. Empezamos oleadas.")
+	if enemy_manager and enemy_manager.has_method("start_waves"):
+		enemy_manager.start_waves()
 
 
 func _on_player_escaped() -> void:
 	print("Game: el jugador ha escapado.")
 	GameManager.on_player_escaped()
+	print("Game: el jugador ha escapado. Aquí cambiamos de escena o mostramos fin de partida.")
+	# TODO: cambiar a escena de victoria / volver al menú
