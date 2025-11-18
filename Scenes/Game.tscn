@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://hpktclvvq00u" path="res://Scenes/HUD.tscn" id="6_71axn"]
 [ext_resource type="PackedScene" uid="uid://b05uie7f3wlf3" path="res://Scenes/Maze/ExitCorridor.tscn" id="7_fgofq"]
 [ext_resource type="PackedScene" uid="uid://frklwbf6lxbx" path="res://Scenes/EnemyNormal.tscn" id="10_71axn"]
-[ext_resource type="Script" uid="uid://cb65mhiyf4qix" path="res://Scenes/enemy_manager.gd" id="11_dahhg"]
+[ext_resource type="Script" uid="uid://cb65mhiyf4qix" path="res://Scripts/Enemy_manager.gd" id="11_dahhg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xkndl"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)

@@ -12,6 +12,7 @@ albedo_color = Color(1, 0, 0, 1)
 [node name="Enemy" type="CharacterBody3D" groups=["Enemy"]]
 script = ExtResource("1_m1htj")
 move_speed = 5.0
+max_health = 250
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 material_override = SubResource("StandardMaterial3D_7fd37")

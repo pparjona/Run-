@@ -6,6 +6,9 @@ extends CharacterBody3D
 @export var min_repath_time: float = 0.25       # tiempo mínimo entre recalculados
 @export var stuck_repath_time: float = 1.0      # si está casi sin moverse tanto tiempo, recalcula
 
+@export var max_health: int = 100               
+var current_health: int = 0
+
 var target: Node3D        # Player
 var maze: Maze            # referencia al Maze
 
@@ -19,6 +22,9 @@ var _time_since_last_repath: float = 0.0
 var _last_position: Vector3
 var _time_since_progress: float = 0.0
 
+
+func _ready() -> void:
+	current_health = max_health
 
 func set_target_and_maze(p_target: Node3D, p_maze: Maze) -> void:
 	target = p_target
@@ -135,3 +141,20 @@ func _recalculate_path(player_cell: Vector2i) -> void:
 	_current_wp_index = 0
 	_last_player_cell = player_cell
 	_time_since_last_repath = 0.0
+	
+
+# ----------------------
+# SISTEMA DE DAÑO / MUERTE
+# ----------------------
+
+func apply_damage(amount: int) -> void:
+	current_health -= amount
+	# Por si quieres log más adelante
+	# print("Enemy hit, hp:", current_health, "/", max_health)
+	if current_health <= 0:
+		die()
+
+
+func die() -> void:
+	# Aquí luego podrás meter animación, sonido, partículas, etc.
+	queue_free()
