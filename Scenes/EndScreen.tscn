@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://bk0d0g4x12cm5"]
+
+[ext_resource type="Script" uid="uid://0p4xbv8pdt5p" path="res://Scripts/End_Screen.gd" id="1_gcms0"]
+[ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_2ohhu"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_jrx8a"]
+font = ExtResource("2_2ohhu")
+font_size = 80
+
+[node name="EndScreen" type="CanvasLayer"]
+script = ExtResource("1_gcms0")
+
+[node name="Background" type="TextureRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = -1
+anchor_left = 0.09
+anchor_top = 0.259
+anchor_right = 0.90900004
+anchor_bottom = 0.40100002
+offset_left = 0.31999207
+offset_top = 0.16799927
+offset_right = -0.16809082
+offset_bottom = 0.15197754
+text = "You finish the game"
+label_settings = SubResource("LabelSettings_jrx8a")
+
+[node name="FinishMusic" type="AudioStreamPlayer2D" parent="."]

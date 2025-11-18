@@ -104,5 +104,4 @@ func on_player_died() -> void:
 
 func on_player_escaped() -> void:
 	print("GameManager: el jugador ha escapado")
-	# MÁS ADELANTE: aquí llamaremos a game_won() cuando exista la escena final
-	# game_won()
+	game_won()
