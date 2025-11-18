@@ -1,8 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://goqims14xemp"]
+[gd_scene load_steps=7 format=3 uid="uid://goqims14xemp"]
 
 [ext_resource type="Script" uid="uid://bpiyrghsanfmv" path="res://Scripts/MenuUi.gd" id="1_f1v4l"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_23r57"]
 [ext_resource type="FontFile" uid="uid://do26357pp65jx" path="res://Textures/Fonts/who asks satan.ttf" id="2_uc07g"]
+[ext_resource type="Texture2D" uid="uid://cj012uxtgtk7h" path="res://Textures/Images/backgroundMenu2.png" id="2_xtm07"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xtm07"]
+font = ExtResource("2_uc07g")
+font_size = 140
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_uc07g"]
 font = ExtResource("2_uc07g")
@@ -18,6 +25,22 @@ anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.005
 offset_bottom = -0.23999023
+texture = ExtResource("2_xtm07")
+expand_mode = 1
+
+[node name="TitleLabel" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_top = 80.0
+offset_right = 152.0
+offset_bottom = 172.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Just Run!"
+label_settings = SubResource("LabelSettings_xtm07")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
