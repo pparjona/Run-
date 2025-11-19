@@ -166,7 +166,7 @@ func _physics_process(delta: float) -> void:
 		motion *= freefly_speed * delta
 
 		# movimiento vertical en noclip
-		if Input.is_key_pressed(KEY_E):  # subir
+		if Input.is_key_pressed(KEY_SPACE):  # subir
 			motion.y = freefly_speed * delta
 		elif Input.is_key_pressed(KEY_Q): # bajar
 			motion.y = -freefly_speed * delta

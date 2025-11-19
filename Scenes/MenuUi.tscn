@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bpiyrghsanfmv" path="res://Scripts/MenuUi.gd" id="1_f1v4l"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_23r57"]
 [ext_resource type="FontFile" uid="uid://do26357pp65jx" path="res://Textures/Fonts/who asks satan.ttf" id="2_uc07g"]
-[ext_resource type="Texture2D" uid="uid://cj012uxtgtk7h" path="res://Textures/Images/backgroundMenu2.png" id="2_xtm07"]
+[ext_resource type="Texture2D" uid="uid://cj012uxtgtk7h" path="res://Textures/Backgrounds/backgroundMenu2.png" id="2_xtm07"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_xtm07"]
 font = ExtResource("2_uc07g")

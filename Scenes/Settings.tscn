@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://dv7qh02nms5t0"]
 
 [ext_resource type="Script" uid="uid://b687oh7w8ydk6" path="res://Scripts/Settings.gd" id="1_4hxq3"]
-[ext_resource type="Texture2D" uid="uid://db05y3ttmo72d" path="res://Textures/Images/backgroundMenu.png" id="2_w1nw0"]
+[ext_resource type="Texture2D" uid="uid://db05y3ttmo72d" path="res://Textures/Backgrounds/backgroundMenu.png" id="2_w1nw0"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_yrknh"]
 [ext_resource type="FontFile" uid="uid://do26357pp65jx" path="res://Textures/Fonts/who asks satan.ttf" id="3_w1nw0"]
 
