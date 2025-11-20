@@ -87,6 +87,7 @@ var gun_pickup_in_range = null # Guarda el arma que podemos recoger
 # ¡Asegúrate de que estos nodos existen en tu escena ProtoController!
 @onready var gun_holder = $Head/Camera3D/EquipedGun
 @onready var pickup_detector = $PickUpDetector
+@onready var equiped_gun: Node3D = $Head/Camera3D/EquipedGun
 
 
 # ---------------------------------------
@@ -340,7 +341,13 @@ func shoot():
 	if anim_player and anim_player.has_animation("shoot"):
 		anim_player.stop() # por si estaba a medias
 		anim_player.play("shoot")
-
+		var audio_shoot: AudioStreamPlayer3D = equipped_gun.get_node_or_null("AudioShoot")
+		if audio_shoot:
+			audio_shoot.stop()
+			audio_shoot.play()
+		else:
+			print("No encuentro AudioShoot dentro de Pistol")
+	
 	# --- DISPARO LÓGICO: BALA ---
 	var muzzle: Node3D = equipped_gun.get_node_or_null("Muzzle")
 	if muzzle == null:
