@@ -41,11 +41,12 @@ extends CharacterBody3D
 @export var input_sprint : String = "sprint"
 ## Name of Input Action to toggle freefly mode.
 @export var input_freefly : String = "freefly"
-# --- AÑADIDO ---
 ## Name of Input Action to Shoot.
 @export var input_shoot : String = "shoot"
 ## Name of Input Action to Pickup.
 @export var input_pickup : String = "pickup"
+## Name of Input Action to Reload.
+@export var input_reload : String = "reload"
 
 
 # ----- VARIABLES -----
@@ -53,21 +54,25 @@ var mouse_captured : bool = false
 var look_rotation : Vector2
 var move_speed : float = 0.0
 var freeflying : bool = false
+@export var shoot_cooldown: float = 0.45
+var can_shoot: bool = true
 
-#VIDA Y FUTURA MUNICION EN PANTALLA
+
+# VIDA Y MUNICIÓN EN PANTALLA
 @export var max_health: int = 100
 var health: int
 
-@export var max_ammo_in_clip: int = 0
-var current_ammo_in_clip: int = 0
+# MUNICIÓN
+@export var max_ammo_in_clip: int = 10      # balas máximas en el cargador
+var current_ammo_in_clip: int = 0           # balas actuales en el cargador
+
+@export var reserve_ammo: int = 20          # balas de reserva (además del cargador lleno)
 
 signal health_changed(current: int, max: int)
 signal player_died
 signal gun_equipped(has_gun: bool)
-signal ammo_changed(current: int, max: int) # preparado para el futuro
+signal ammo_changed(current: int, max: int) # current = en cargador, max = tamaño de cargador
 
-
-# --- AÑADIDO ---
 # Carga las escenas. ¡¡ASEGÚRATE DE QUE ESTAS RUTAS SEAN CORRECTAS!!
 const BULLET_SCENE = preload("res://Scenes/Pistol/bullet.tscn")
 const EQUIPPED_GUN_SCENE = preload("res://Scenes/Pistol/equiped_gun.tscn")
@@ -76,13 +81,10 @@ const EQUIPPED_GUN_SCENE = preload("res://Scenes/Pistol/equiped_gun.tscn")
 var has_gun = false
 var gun_pickup_in_range = null # Guarda el arma que podemos recoger
 
-
 # REFERENCES
 @onready var head: Node3D = $Head
 @onready var collider: CollisionShape3D = $Collider
-# --- AÑADIDO ---
-# ¡Asegúrate de que estos nodos existen en tu escena ProtoController
-# con estas rutas exactas!
+# ¡Asegúrate de que estos nodos existen en tu escena ProtoController!
 @onready var gun_holder = $Head/Camera3D/EquipedGun
 @onready var pickup_detector = $PickUpDetector
 
@@ -101,35 +103,41 @@ func _ready() -> void:
 	pickup_detector.monitoring = true 
 	pickup_detector.monitorable = false
 	
-	#Iniciar vida y municion
+	# Iniciar vida
 	health = max_health
 	health_changed.emit(health, max_health)
 
+	# Iniciar munición:
+	#  - un cargador lleno
+	#  - reserva inicial (por defecto 20 → total 30)
+	if max_ammo_in_clip <= 0:
+		max_ammo_in_clip = 10
 	current_ammo_in_clip = max_ammo_in_clip
+	# reserve_ammo ya viene del export (por defecto 20)
 	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
 
 	GameManager.register_player(self)
 
+
 # ---------------------------------------
 # INPUT
 # ---------------------------------------
-
-# --- AÑADIDO ---
-# Esta función se usa para acciones de juego (como disparar o recoger)
 func _input(event: InputEvent) -> void:
 	# No procesar disparos o recogidas si estamos en modo noclip
-	# (Evita conflicto con 'E' para subir en noclip y 'E' para recoger)
 	if freeflying:
 		return
 
-	# Lógica de Disparar
+	# Disparar
 	if event.is_action_pressed(input_shoot):
 		shoot()
 	
-	# Lógica de Recoger
-	# Si presionamos "pickup" Y hay un arma en rango Y no tenemos ya un arma...
+	# Recoger arma
 	if event.is_action_pressed(input_pickup) and gun_pickup_in_range != null and not has_gun:
 		equip_gun(gun_pickup_in_range)
+
+	# Recargar
+	if event.is_action_pressed(input_reload):
+		reload_weapon()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -150,14 +158,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			disable_freefly()
 
+
 # ---------------------------------------
 # PHYSICS
 # ---------------------------------------
 func _physics_process(delta: float) -> void:
 
-	# ----------------------------------------------------
 	# FREEFLY / NOCLIP MODE
-	# ----------------------------------------------------
 	if can_freefly and freeflying:
 		var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
 		var motion := (head.global_basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
@@ -168,15 +175,13 @@ func _physics_process(delta: float) -> void:
 		# movimiento vertical en noclip
 		if Input.is_key_pressed(KEY_SPACE):  # subir
 			motion.y = freefly_speed * delta
-		elif Input.is_key_pressed(KEY_Q): # bajar
+		elif Input.is_key_pressed(KEY_Q):    # bajar
 			motion.y = -freefly_speed * delta
 
 		move_and_collide(motion)
 		return  # NOS SALIMOS AQUÍ → no aplicamos gravedad ni física normal
 
-	# ----------------------------------------------------
 	# MOVIMIENTO NORMAL (no freefly)
-	# ----------------------------------------------------
 	# Gravedad
 	if has_gravity:
 		if not is_on_floor():
@@ -209,6 +214,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+
 # ----------------------------------------------------
 # ROTACIÓN DE CÁMARA
 # ----------------------------------------------------
@@ -220,6 +226,7 @@ func rotate_look(rot_input : Vector2):
 	rotate_y(look_rotation.y)
 	head.transform.basis = Basis()
 	head.rotate_x(look_rotation.x)
+
 
 # ----------------------------------------------------
 # FREEFLY ENABLE / DISABLE
@@ -235,6 +242,7 @@ func disable_freefly():
 	freeflying = false
 	print("FREEFLY DESACTIVADO")
 
+
 # ----------------------------------------------------
 # MOUSE
 # ----------------------------------------------------
@@ -245,6 +253,7 @@ func capture_mouse():
 func release_mouse():
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	mouse_captured = false
+
 
 # ----------------------------------------------------
 # INPUT CHECKS
@@ -272,36 +281,33 @@ func check_input_mappings():
 		push_error("Freefly disabled. Missing input_freefly: " + input_freefly)
 		can_freefly = false
 		
-	# --- Gun ---
+	# Gun
 	if not InputMap.has_action(input_shoot):
 		push_error("Shooting disabled. Missing input_shoot: " + input_shoot)
 	if not InputMap.has_action(input_pickup):
 		push_error("Pickup disabled. Missing input_pickup: " + input_pickup)
+	if not InputMap.has_action(input_reload):
+		push_error("Reload disabled. Missing input_reload: " + input_reload)
 
 
 # ----------------------------------------------------
 #  FUNCIONES DE ARMAS
 # ----------------------------------------------------
-
 func equip_gun(gun_pickup_object):
 	# Marcar que tenemos el arma
 	has_gun = true
 	
 	# Destruir el arma del suelo
 	gun_pickup_object.queue_free()
-	
-	# Ya no está en rango (porque la hemos borrado)
 	gun_pickup_in_range = null
 	
 	# Crear la instancia del arma equipada
 	var equipped_gun = EQUIPPED_GUN_SCENE.instantiate()
-	
-	# Añadirla al 'GunHolder'
 	gun_holder.add_child(equipped_gun)
 	print("¡Arma equipada!")
 	gun_equipped.emit(true)
 
-	# Cuando gestionéis munición real, aquí actualizaréis valores y emitiréis ammo_changed
+	# Actualizar HUD de munición
 	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
 
 
@@ -311,22 +317,35 @@ func shoot():
 		print("No tengo arma")
 		return
 
+	# Cooldown: si todavía no ha pasado el tiempo, no disparamos
+	if not can_shoot:
+		return
+
+	# Si no hay balas en el cargador
+	if current_ammo_in_clip <= 0:
+		print("Click! Sin balas en el cargador.")
+		return
+
 	# Asumimos que el arma equipada es el primer hijo del GunHolder
-	var equipped_gun := gun_holder.get_child(0)
-	if equipped_gun == null:
+	if gun_holder.get_child_count() == 0:
 		print("No hay arma equipada en gun_holder")
 		return
+	var equipped_gun := gun_holder.get_child(0)
+
+	# Activar cooldown
+	can_shoot = false
 
 	# --- DISPARO VISUAL: ANIMACIÓN ---
 	var anim_player: AnimationPlayer = equipped_gun.get_node_or_null("AnimationPlayer")
 	if anim_player and anim_player.has_animation("shoot"):
-		anim_player.stop()            # por si estaba a medias
+		anim_player.stop() # por si estaba a medias
 		anim_player.play("shoot")
 
 	# --- DISPARO LÓGICO: BALA ---
 	var muzzle: Node3D = equipped_gun.get_node_or_null("Muzzle")
 	if muzzle == null:
 		print("ERROR: El arma equipada no tiene nodo 'Muzzle'")
+		can_shoot = true
 		return
 
 	var bullet = BULLET_SCENE.instantiate()
@@ -339,6 +358,47 @@ func shoot():
 	get_tree().root.add_child(bullet)
 	bullet.global_transform.origin = muzzle_transform.origin
 
+	# Restar una bala del cargador
+	current_ammo_in_clip -= 1
+	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
+
+	# Esperar el cooldown antes de permitir otro disparo
+	await get_tree().create_timer(shoot_cooldown).timeout
+	can_shoot = true
+
+
+func reload_weapon():
+	# No recargamos si no tenemos arma
+	if not has_gun:
+		return
+
+	# Si el cargador ya está lleno, nada que hacer
+	if current_ammo_in_clip >= max_ammo_in_clip:
+		print("Cargador ya lleno")
+		return
+
+	# Si no tenemos balas de reserva, no se puede recargar
+	if reserve_ammo <= 0:
+		print("No quedan balas de reserva")
+		return
+
+	var needed: int = max_ammo_in_clip - current_ammo_in_clip
+	var to_load: int = min(needed, reserve_ammo)
+
+	current_ammo_in_clip += to_load
+	reserve_ammo -= to_load
+
+	print("Recargando:", to_load, "balas. En cargador:", current_ammo_in_clip, "Reserva:", reserve_ammo)
+	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
+
+	# Reproducir animación de recarga si existe
+	if gun_holder.get_child_count() > 0:
+		var equipped_gun: Node3D = gun_holder.get_child(0)
+		var anim_player: AnimationPlayer = equipped_gun.get_node_or_null("AnimationPlayer")
+		if anim_player and anim_player.has_animation("reload"):
+			anim_player.play("reload")
+
+
 # ----------------------------------------------------
 #  SEÑALES DE RECOGIDA
 # ----------------------------------------------------
@@ -350,13 +410,15 @@ func _on_pick_up_detector_area_entered(area: Area3D) -> void:
 
 
 func _on_pick_up_detector_area_exited(area: Area3D) -> void:
-		# Si el objeto que sale es el que teníamos guardado...
+	# Si el objeto que sale es el que teníamos guardado...
 	if area == gun_pickup_in_range:
 		gun_pickup_in_range = null
 		print("Arma fuera de rango")
 
 
-#Funcionalidad muerte y daño con Gamemanager
+# ----------------------------------------------------
+# DAÑO / MUERTE
+# ----------------------------------------------------
 func _on_player_died() -> void:
 	print("Jugador muerto")
 	GameManager.on_player_died()
