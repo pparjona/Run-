@@ -69,8 +69,8 @@ signal ammo_changed(current: int, max: int) # preparado para el futuro
 
 # --- AÑADIDO ---
 # Carga las escenas. ¡¡ASEGÚRATE DE QUE ESTAS RUTAS SEAN CORRECTAS!!
-const BULLET_SCENE = preload("res://Scenes/bullet.tscn")
-const EQUIPPED_GUN_SCENE = preload("res://Scenes/equiped_gun.tscn")
+const BULLET_SCENE = preload("res://Scenes/Pistol/bullet.tscn")
+const EQUIPPED_GUN_SCENE = preload("res://Scenes/Pistol/equiped_gun.tscn")
 
 # Estado del arma
 var has_gun = false
@@ -306,36 +306,37 @@ func equip_gun(gun_pickup_object):
 
 
 func shoot():
-	# ¡COMPROBACIÓN CLAVE!
 	# Si no tenemos arma, no podemos disparar
 	if not has_gun:
 		print("No tengo arma")
 		return
 
-	# Obtener el arma y su cañón (Muzzle)
-	# Asumimos que el arma es el primer hijo del GunHolder
-	var equipped_gun = gun_holder.get_child(0)
+	# Asumimos que el arma equipada es el primer hijo del GunHolder
+	var equipped_gun := gun_holder.get_child(0)
 	if equipped_gun == null:
-		return # No hay arma equipada (por si acaso)
-		
-	var muzzle = equipped_gun.get_node("Muzzle")
+		print("No hay arma equipada en gun_holder")
+		return
+
+	# --- DISPARO VISUAL: ANIMACIÓN ---
+	var anim_player: AnimationPlayer = equipped_gun.get_node_or_null("AnimationPlayer")
+	if anim_player and anim_player.has_animation("shoot"):
+		anim_player.stop()            # por si estaba a medias
+		anim_player.play("shoot")
+
+	# --- DISPARO LÓGICO: BALA ---
+	var muzzle: Node3D = equipped_gun.get_node_or_null("Muzzle")
 	if muzzle == null:
 		print("ERROR: El arma equipada no tiene nodo 'Muzzle'")
 		return
 
-	# Crea una instancia (una copia) de la escena de la bala
 	var bullet = BULLET_SCENE.instantiate()
-
-	# Obtiene la transformación global (posición y rotación) del Muzzle
 	var muzzle_transform = muzzle.global_transform
-	
-	# ¡Importante! Establece la dirección de la bala (eje Z negativo local)
+
+	# Dirección de la bala (eje -Z local del Muzzle)
 	bullet.direction = -muzzle_transform.basis.z.normalized()
 
-	# Añade la bala a la escena principal
+	# Añadir la bala a la escena principal
 	get_tree().root.add_child(bullet)
-
-	# Establece la posición de la bala
 	bullet.global_transform.origin = muzzle_transform.origin
 
 # ----------------------------------------------------

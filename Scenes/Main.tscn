@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://d1eni35y1fo6q"]
 
-[ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://Scenes/Proto_controller.tscn" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://cu66yuh0yjyyb" path="res://Scenes/gun_pick_up.tscn" id="2_idj7w"]
+[ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://Scenes/Player/Proto_controller.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://cu66yuh0yjyyb" path="res://Scenes/Pistol/gun_pick_up.tscn" id="2_idj7w"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_idj7w"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
