@@ -54,8 +54,11 @@ var mouse_captured : bool = false
 var look_rotation : Vector2
 var move_speed : float = 0.0
 var freeflying : bool = false
-@export var shoot_cooldown: float = 0.45
+@export var shoot_cooldown: float = 0.45     # ajusta a la duración de la animación "shoot"
 var can_shoot: bool = true
+@export var reload_time: float = 1.0         # ajusta a la duración de la animación "reload"
+var is_reloading: bool = false
+
 
 
 # VIDA Y MUNICIÓN EN PANTALLA
@@ -318,8 +321,8 @@ func shoot():
 		print("No tengo arma")
 		return
 
-	# Cooldown: si todavía no ha pasado el tiempo, no disparamos
-	if not can_shoot:
+	# No disparamos si estamos en cooldown o recargando
+	if not can_shoot or is_reloading:
 		return
 
 	# Si no hay balas en el cargador
@@ -333,7 +336,7 @@ func shoot():
 		return
 	var equipped_gun := gun_holder.get_child(0)
 
-	# Activar cooldown
+	# Activar cooldown de disparo
 	can_shoot = false
 
 	# --- DISPARO VISUAL: ANIMACIÓN ---
@@ -345,7 +348,7 @@ func shoot():
 		if audio_shoot:
 			audio_shoot.stop()
 			audio_shoot.play()
-	
+
 	# --- DISPARO LÓGICO: BALA ---
 	var muzzle: Node3D = equipped_gun.get_node_or_null("Muzzle")
 	if muzzle == null:
@@ -372,9 +375,14 @@ func shoot():
 	can_shoot = true
 
 
+
 func reload_weapon():
 	# No recargamos si no tenemos arma
 	if not has_gun:
+		return
+
+	# No recargamos si ya estamos recargando
+	if is_reloading:
 		return
 
 	# Si el cargador ya está lleno, nada que hacer
@@ -387,6 +395,23 @@ func reload_weapon():
 		print("No quedan balas de reserva")
 		return
 
+	is_reloading = true
+
+	# Reproducir animación de recarga si existe
+	if gun_holder.get_child_count() > 0:
+		var equipped_gun := gun_holder.get_child(0)
+		var anim_player: AnimationPlayer = equipped_gun.get_node_or_null("AnimationPlayer")
+		if anim_player and anim_player.has_animation("reload"):
+			anim_player.play("reload")
+			var audio_reload: AudioStreamPlayer3D = equipped_gun.get_node_or_null("AudioReload")
+			if audio_reload:
+				audio_reload.stop()
+				audio_reload.play()
+
+	# Esperar el tiempo de recarga (hazlo coincidir con la duración de la animación)
+	await get_tree().create_timer(reload_time).timeout
+
+	# Ahora aplicamos la lógica de recarga
 	var needed: int = max_ammo_in_clip - current_ammo_in_clip
 	var to_load: int = min(needed, reserve_ammo)
 
@@ -396,16 +421,7 @@ func reload_weapon():
 	print("Recargando:", to_load, "balas. En cargador:", current_ammo_in_clip, "Reserva:", reserve_ammo)
 	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
 
-	# Reproducir animación de recarga si existe
-	if gun_holder.get_child_count() > 0:
-		var equipped_gun: Node3D = gun_holder.get_child(0)
-		var anim_player: AnimationPlayer = equipped_gun.get_node_or_null("AnimationPlayer")
-		if anim_player and anim_player.has_animation("reload"):
-			anim_player.play("reload")
-			var audio_reload: AudioStreamPlayer3D = equipped_gun.get_node_or_null("AudioReload")
-			if audio_reload:
-				audio_reload.stop()
-				audio_reload.play()
+	is_reloading = false
 
 
 # ----------------------------------------------------
