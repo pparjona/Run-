@@ -349,6 +349,9 @@ func shoot():
 			audio_shoot.stop()
 			audio_shoot.play()
 
+	# --- DISPARO VISUAL: FLASH DE LUZ ---
+	_flash_muzzle(equiped_gun)
+
 	# --- DISPARO LÓGICO: BALA ---
 	var muzzle: Node3D = equipped_gun.get_node_or_null("Muzzle")
 	if muzzle == null:
@@ -422,6 +425,16 @@ func reload_weapon():
 	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
 
 	is_reloading = false
+
+func _flash_muzzle(equipped_gun: Node3D) -> void:
+	var flash_light := equipped_gun.get_node_or_null("Pistol/Muzzle/MuzzleFlashLight")
+	if flash_light == null:
+		return
+
+	flash_light.visible = true
+	# Duración muy corta del flash (ajusta a tu gusto: 0.03–0.08 suele ir bien)
+	await get_tree().create_timer(0.05).timeout
+	flash_light.visible = false
 
 
 # ----------------------------------------------------

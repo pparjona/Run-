@@ -226,6 +226,11 @@ libraries = {
 [node name="Muzzle" type="Marker3D" parent="." index="4"]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.0023500659, 0.5871299, 3.066061)
 
+[node name="MuzzleFlashLight" type="OmniLight3D" parent="Muzzle" index="0"]
+visible = false
+light_color = Color(0.99999994, 0.7590085, 0.44558018, 1)
+shadow_enabled = true
+
 [node name="AudioShoot" type="AudioStreamPlayer3D" parent="." index="5"]
 stream = ExtResource("3_4u80v")
 volume_db = -10.0
