@@ -6,7 +6,7 @@
 bg_color = Color(0.4090936, 0.40909368, 0.40909347, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jo1ms"]
-bg_color = Color(1.0997876e-05, 0.67431587, 0.1400742, 1)
+bg_color = Color(0.6830772, 0.6830774, 0.6830771, 1)
 
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_sd512")
@@ -14,50 +14,43 @@ script = ExtResource("1_sd512")
 [node name="LeftContainer" type="MarginContainer" parent="."]
 anchors_preset = -1
 anchor_left = 0.014
-anchor_top = 0.025
-anchor_right = 0.23500001
-anchor_bottom = 0.09900001
-offset_left = -1.1280003
-offset_top = -1.2000008
-offset_right = 0.27996826
-offset_bottom = -0.15200806
+anchor_top = 0.96300006
+anchor_right = 0.208
+anchor_bottom = 0.9710001
+offset_left = -0.12800026
+offset_top = -0.024047852
+offset_right = 0.3840027
+offset_bottom = -0.20806885
+grow_vertical = 0
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="LeftContainer"]
 layout_mode = 2
-
-[node name="HealthText" type="Label" parent="LeftContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-text = "Health: "
+alignment = 1
 
 [node name="HealthBar" type="ProgressBar" parent="LeftContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 5)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_sd512")
 theme_override_styles/fill = SubResource("StyleBoxFlat_jo1ms")
+show_percentage = false
 
 [node name="RightContainer" type="MarginContainer" parent="."]
 anchors_preset = -1
-anchor_left = 0.90300006
-anchor_top = 0.025
-anchor_right = 0.98600006
-anchor_bottom = 0.086
-offset_left = -0.25610352
-offset_top = -0.20000076
-offset_right = 0.12792969
-offset_bottom = 0.27199936
+anchor_left = 0.97200006
+anchor_top = 0.95100003
+anchor_right = 0.98200005
+anchor_bottom = 0.98600006
+offset_left = 0.25598145
+offset_top = -0.24804688
+offset_right = -0.2640381
+offset_bottom = 0.07196045
 grow_horizontal = 0
+grow_vertical = 0
 
 [node name="AmmoRow" type="HBoxContainer" parent="RightContainer"]
 layout_mode = 2
-
-[node name="AmmoText" type="Label" parent="RightContainer/AmmoRow"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "Ammo: "
 
 [node name="AmmoValue" type="Label" parent="RightContainer/AmmoRow"]
 layout_mode = 2

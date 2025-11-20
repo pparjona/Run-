@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://cb65mhiyf4qix" path="res://Scripts/Enemy_manager.gd" id="11_dahhg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3so38"]
-energy_multiplier = 0.05
+energy_multiplier = 0.07
 
 [sub_resource type="Sky" id="Sky_3so38"]
 sky_material = SubResource("ProceduralSkyMaterial_3so38")
