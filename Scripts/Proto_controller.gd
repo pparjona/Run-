@@ -345,8 +345,6 @@ func shoot():
 		if audio_shoot:
 			audio_shoot.stop()
 			audio_shoot.play()
-		else:
-			print("No encuentro AudioShoot dentro de Pistol")
 	
 	# --- DISPARO LÓGICO: BALA ---
 	var muzzle: Node3D = equipped_gun.get_node_or_null("Muzzle")
@@ -404,6 +402,10 @@ func reload_weapon():
 		var anim_player: AnimationPlayer = equipped_gun.get_node_or_null("AnimationPlayer")
 		if anim_player and anim_player.has_animation("reload"):
 			anim_player.play("reload")
+			var audio_reload: AudioStreamPlayer3D = equipped_gun.get_node_or_null("AudioReload")
+			if audio_reload:
+				audio_reload.stop()
+				audio_reload.play()
 
 
 # ----------------------------------------------------

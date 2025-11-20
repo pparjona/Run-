@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://7bonvm62mrv1"]
+[gd_scene load_steps=9 format=3 uid="uid://7bonvm62mrv1"]
 
 [ext_resource type="PackedScene" uid="uid://cjx4rvwvc44ef" path="res://Assets/Pistol/Models/Pistol.glb" id="1_l7qi8"]
 [ext_resource type="Script" uid="uid://bbaybnm7jhx20" path="res://Scenes/Pistol/equiped_gun.gd" id="2_w2rc6"]
 [ext_resource type="AudioStream" uid="uid://uxxiyxnen1pb" path="res://Sounds/disparoPistolaNormal.mp3" id="3_4u80v"]
+[ext_resource type="AudioStream" uid="uid://evjjrnkesjfg" path="res://Sounds/recargaPistola.mp3" id="4_esf8i"]
 
 [sub_resource type="Animation" id="Animation_a65fw"]
 resource_name = "Animation"
@@ -227,5 +228,11 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.00
 
 [node name="AudioShoot" type="AudioStreamPlayer3D" parent="." index="5"]
 stream = ExtResource("3_4u80v")
+volume_db = -10.0
+max_db = 1.0
+
+[node name="AudioReload" type="AudioStreamPlayer3D" parent="." index="6"]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0)
+stream = ExtResource("4_esf8i")
 volume_db = -10.0
 max_db = 1.0

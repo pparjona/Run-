@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bhwc16c8hxhrr" path="res://Scripts/Proto_controller.gd" id="1_ucva2"]
 [ext_resource type="Texture2D" uid="uid://byyf75v5iiw7g" path="res://Textures/Lights/flashlight_light.jpg" id="2_gp6yy"]
-[ext_resource type="Script" path="res://Scripts/Flashlight.gd" id="3_0i1f7"]
+[ext_resource type="Script" uid="uid://bc08ojk0uo874" path="res://Scripts/Flashlight.gd" id="3_0i1f7"]
 [ext_resource type="AudioStream" uid="uid://bbr71xjjpv3d4" path="res://Sounds/linterna.mp3" id="4_46x1p"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
