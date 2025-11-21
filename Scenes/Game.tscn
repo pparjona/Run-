@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://ba4m0xgo5l8jw"]
+[gd_scene load_steps=17 format=3 uid="uid://ba4m0xgo5l8jw"]
 
 [ext_resource type="Script" uid="uid://e1wsmpwyvwo0" path="res://Scripts/Game.gd" id="1_b2bpf"]
 [ext_resource type="Script" uid="uid://cbaimku75aaqw" path="res://Scripts/Maze.gd" id="2_7lihs"]
@@ -11,9 +11,11 @@
 [ext_resource type="PackedScene" uid="uid://hpktclvvq00u" path="res://Scenes/HUD.tscn" id="6_71axn"]
 [ext_resource type="PackedScene" uid="uid://b05uie7f3wlf3" path="res://Scenes/Maze/ExitCorridor.tscn" id="7_fgofq"]
 [ext_resource type="PackedScene" uid="uid://frklwbf6lxbx" path="res://Scenes/Enemys/EnemyNormal.tscn" id="10_71axn"]
+[ext_resource type="PackedScene" uid="uid://bq1avvp8yie0r" path="res://Scenes/Maze/WallTorch.tscn" id="11_3cx6b"]
 [ext_resource type="Script" uid="uid://cb65mhiyf4qix" path="res://Scripts/Enemy_manager.gd" id="11_dahhg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3so38"]
+energy_multiplier = 0.07
 
 [sub_resource type="Sky" id="Sky_3so38"]
 sky_material = SubResource("ProceduralSkyMaterial_3so38")
@@ -24,6 +26,7 @@ background_color = Color(0.7306387, 0.4360749, 0.33801955, 1)
 sky = SubResource("Sky_3so38")
 tonemap_mode = 2
 glow_enabled = true
+volumetric_fog_enabled = true
 volumetric_fog_density = 0.14
 volumetric_fog_albedo = Color(0.4244187, 0.42441872, 0.4244187, 1)
 volumetric_fog_emission = Color(0.31579703, 0.315797, 0.31579694, 1)
@@ -47,11 +50,10 @@ environment = SubResource("Environment_u44n3")
 script = ExtResource("2_7lihs")
 wall_scene = ExtResource("3_fgofq")
 floor_scene = ExtResource("4_2irst")
+torch_scene = ExtResource("11_3cx6b")
 
 [node name="Player" parent="." instance=ExtResource("5_bf53h")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6173468, 0.093134165, 0.022104025)
-
-[node name="ExitCorridor" parent="." instance=ExtResource("7_fgofq")]
 
 [node name="EnemyManager" type="Node3D" parent="." node_paths=PackedStringArray("maze", "player")]
 script = ExtResource("11_dahhg")

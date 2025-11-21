@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bq1avvp8yie0r"]
+
+[ext_resource type="PackedScene" uid="uid://ckbrop5jfnyc2" path="res://Assets/WallTorch/wallTorchBest.glb" id="1_mh3rk"]
+[ext_resource type="Script" uid="uid://b5mggslwxi30s" path="res://Scenes/Maze/TorchLight.gd" id="2_dcpo4"]
+
+[node name="WallTorch" instance=ExtResource("1_mh3rk")]
+transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
+
+[node name="TorchLight" type="OmniLight3D" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 37.96501, 26.544386)
+light_color = Color(0.9725128, 0.47981125, 1.732707e-06, 1)
+light_bake_mode = 0
+shadow_enabled = true
+shadow_opacity = 0.1
+omni_range = 10.0
+omni_attenuation = 0.8
+script = ExtResource("2_dcpo4")

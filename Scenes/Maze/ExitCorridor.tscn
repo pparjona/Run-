@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://b05uie7f3wlf3"]
+[gd_scene load_steps=4 format=3 uid="uid://b05uie7f3wlf3"]
 
 [ext_resource type="Script" uid="uid://cpxofn7ooi3fa" path="res://Scripts/Exit_corridor.gd" id="1_xqyku"]
+[ext_resource type="PackedScene" uid="uid://bq1avvp8yie0r" path="res://Scenes/Maze/WallTorch.tscn" id="2_cwe7u"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cwe7u"]
 size = Vector3(2, 3, 2)
@@ -44,3 +45,9 @@ size = Vector3(0.5, 3, 2)
 [node name="RightPillar" type="CSGBox3D" parent="DoorFrameRoot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 1.5, 2)
 size = Vector3(0.5, 3, 2)
+
+[node name="WallTorch" parent="." instance=ExtResource("2_cwe7u")]
+transform = Transform3D(0.00029544113, 0, -0.009995636, 0, 0.01, 0, 0.009995636, 0, 0.00029544113, 19.745108, 1.8450458, -2.0129304)
+
+[node name="WallTorch2" parent="." instance=ExtResource("2_cwe7u")]
+transform = Transform3D(0.00029544113, 0, -0.009995636, 0, 0.01, 0, 0.009995636, 0, 0.00029544113, 19.745108, 1.8450458, 2.0793715)

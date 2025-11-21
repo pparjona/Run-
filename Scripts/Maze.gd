@@ -8,6 +8,10 @@ class_name Maze
 @export var wall_scene: PackedScene
 @export var floor_scene: PackedScene
 
+@export var torch_scene: PackedScene
+@export_range(0.0, 1.0, 0.01) var torch_probability: float = 0.04
+@export var torch_height: float = 2.0
+
 # Altura y grosor de paredes (en unidades del mundo)
 @export var wall_height: float = 4.0
 @export var wall_thickness: float = 6.0  # normalmente igual a cell_size
@@ -36,6 +40,7 @@ func _ready() -> void:
 	_carve_exit()
 	_collect_walkable_cells()
 	_build_maze()
+	_place_torches()
 
 func _init_grid() -> void:
 	grid.clear()
@@ -99,12 +104,16 @@ func _is_inside_grid(cell: Vector2i) -> bool:
 # ---------------------------------------------------------
 func _carve_center_room() -> void:
 	# Centro del grid
+	@warning_ignore("integer_division")
 	var center_x: int = width / 2
+	@warning_ignore("integer_division")
 	var center_y: int = height / 2
 	center_cell = Vector2i(center_x, center_y)
 
 	# Mitad del tamaño de la sala en celdas
+	@warning_ignore("integer_division")
 	var half_w: int = room_width_cells / 2
+	@warning_ignore("integer_division")
 	var half_h: int = room_height_cells / 2
 
 	# Recorremos el rectángulo [center_x-half_w, center_x+half_w] x [center_y-half_h, center_y+half_h]
@@ -234,10 +243,10 @@ func _find_nearest_walkable(cell: Vector2i, max_radius: int = 2) -> Vector2i:
 
 
 func get_path_world(start_world: Vector3, goal_world: Vector3, height_offset: float = 2.0) -> Array:
-	var start_cell := world_to_cell(start_world)
+	var start_cell_path := world_to_cell(start_world)
 	var goal_cell := world_to_cell(goal_world)
 
-	var cell_path: Array = find_path_cells(start_cell, goal_cell)
+	var cell_path: Array = find_path_cells(start_cell_path, goal_cell)
 	var world_path: Array = []
 
 	for c in cell_path:
@@ -325,3 +334,61 @@ func get_random_walkable_world_position(
 	) -> Vector3:
 	var cell := get_random_walkable_cell(exclude_start, exclude_exit, exclude_center)
 	return cell_to_world(cell, height_offset)
+
+func _place_torches() -> void:
+	if torch_scene == null:
+		return
+
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+
+	for cell: Vector2i in walkable_cells:
+		# Probabilidad de poner antorcha en esta celda de pasillo
+		if rng.randf() > torch_probability:
+			continue
+
+		var wall_dirs: Array[Vector2i] = []
+		var dirs: Array[Vector2i] = [
+			Vector2i.LEFT,
+			Vector2i.RIGHT,
+			Vector2i.UP,
+			Vector2i.DOWN
+		]
+
+		# Buscamos paredes adyacentes a este pasillo
+		for dir: Vector2i in dirs:
+			var neighbor: Vector2i = cell + dir
+
+			if not _is_inside_grid(neighbor):
+				continue
+
+			# OJO: grid[y][x]
+			if grid[neighbor.y][neighbor.x] == 0:
+				wall_dirs.append(dir)
+
+		if wall_dirs.is_empty():
+			continue
+
+		# Elegimos una pared al azar alrededor del pasillo
+		var dir2d: Vector2i = wall_dirs[rng.randi_range(0, wall_dirs.size() - 1)]
+		var wall_cell: Vector2i = cell + dir2d
+
+		# Dirección de pasillo -> pared en 3D
+		var dir3d: Vector3 = Vector3(dir2d.x, 0.0, dir2d.y).normalized()
+
+		# Centro del bloque de pared (igual que en _build_maze)
+		var wall_center: Vector3 = cell_to_world(wall_cell, wall_height * 0.5)
+
+		# Punto en la cara de la pared que da al pasillo
+		var offset_distance: float = wall_thickness * 0.5 + 0.1
+		var torch_pos: Vector3 = wall_center - dir3d * offset_distance
+		torch_pos.y = torch_height
+
+		var torch := torch_scene.instantiate() as Node3D
+		add_child(torch)
+		torch.global_position = torch_pos
+
+		# Que mire hacia el interior del pasillo
+		var forward: Vector3 = -dir3d
+		torch.look_at(torch.global_position + forward, Vector3.UP)
+		torch.rotate_y(PI)#Esto es por que genera las antorchas con 180 grados y asi se corrgie y mira hacia fuera
