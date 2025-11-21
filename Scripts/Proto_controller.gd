@@ -74,7 +74,7 @@ var current_ammo_in_clip: int = 0           # balas actuales en el cargador
 signal health_changed(current: int, max: int)
 signal player_died
 signal gun_equipped(has_gun: bool)
-signal ammo_changed(current: int, max: int) # current = en cargador, max = tamaño de cargador
+signal ammo_changed(current_clip: int, reserve: int) 
 
 # Carga las escenas. ¡¡ASEGÚRATE DE QUE ESTAS RUTAS SEAN CORRECTAS!!
 const BULLET_SCENE = preload("res://Scenes/Pistol/bullet.tscn")
@@ -118,7 +118,7 @@ func _ready() -> void:
 		max_ammo_in_clip = 10
 	current_ammo_in_clip = max_ammo_in_clip
 	# reserve_ammo ya viene del export (por defecto 20)
-	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
+	ammo_changed.emit(current_ammo_in_clip, reserve_ammo)
 
 	GameManager.register_player(self)
 
@@ -312,7 +312,7 @@ func equip_gun(gun_pickup_object):
 	gun_equipped.emit(true)
 
 	# Actualizar HUD de munición
-	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
+	ammo_changed.emit(current_ammo_in_clip, reserve_ammo)
 
 
 func shoot():
@@ -376,7 +376,7 @@ func shoot():
 
 	# 6) Restar bala del cargador y actualizar HUD
 	current_ammo_in_clip -= 1
-	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
+	ammo_changed.emit(current_ammo_in_clip, reserve_ammo)
 
 	# 7) Cooldown de disparo
 	await get_tree().create_timer(shoot_cooldown).timeout
@@ -427,9 +427,18 @@ func reload_weapon():
 	reserve_ammo -= to_load
 
 	print("Recargando:", to_load, "balas. En cargador:", current_ammo_in_clip, "Reserva:", reserve_ammo)
-	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
+	ammo_changed.emit(current_ammo_in_clip, reserve_ammo)
 
 	is_reloading = false
+
+func add_ammo(amount: int) -> void:
+	if amount <= 0:
+		return
+
+	reserve_ammo += amount
+	print("Has recogido ", amount, " balas. Reserva total:", reserve_ammo)
+
+
 
 func _flash_muzzle(equipped_gun: Node3D) -> void:
 	var flash_light := equipped_gun.get_node_or_null("Pistol/Muzzle/MuzzleFlashLight")
@@ -446,10 +455,24 @@ func _flash_muzzle(equipped_gun: Node3D) -> void:
 #  SEÑALES DE RECOGIDA
 # ----------------------------------------------------
 func _on_pick_up_detector_area_entered(area: Area3D) -> void:
-	# Si el objeto que entró está en el grupo "GunPickup"...
+	# Arma en el suelo
 	if area.is_in_group("GunPickup"):
 		gun_pickup_in_range = area
 		print("¡Puedes recoger un arma! (Presiona 'E')")
+		return
+
+	# Munición: la recogemos automáticamente al pasar por encima
+	if area.is_in_group("AmmoPickup"):
+		print("Pickup de munición detectado")
+		if area.has_method("collect"):
+			area.collect(self)
+		else:
+			# Por si alguna vez hay un pickup sin método collect
+			if "ammo_amount" in area:
+				add_ammo(area.ammo_amount)
+				area.queue_free()
+		return
+
 
 
 func _on_pick_up_detector_area_exited(area: Area3D) -> void:

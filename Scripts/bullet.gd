@@ -1,7 +1,7 @@
 # Bala.gd
 extends CharacterBody3D
 
-@export var speed: float = 100.0
+@export var speed: float = 200.0
 @export var damage: int = 50
 
 @onready var lifetime_timer: Timer = $LifetimeTimer

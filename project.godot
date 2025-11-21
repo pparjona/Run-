@@ -36,6 +36,7 @@ folder_colors={
 GunPickup=""
 Enemy=""
 Player=""
+AmmoPickup=""
 
 [input]
 

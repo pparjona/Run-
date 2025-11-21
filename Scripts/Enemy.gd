@@ -10,6 +10,13 @@ extends CharacterBody3D
 @export var min_repath_time: float = 0.25
 @export var stuck_repath_time: float = 1.0
 
+#variables para el loot de dropeo
+@export var ammo_drop_scene: PackedScene      # escena de AmmoPickup
+@export var ammo_drop_chance: float = 0.4     # probabilidad (0.0–1.0)
+@export var ammo_drop_min: int = 5            # mínimo de balas
+@export var ammo_drop_max: int = 15           # máximo de balas
+
+
 @export var max_health: int = 100
 var current_health: int = 0
 
@@ -184,4 +191,32 @@ func apply_damage(amount: int) -> void:
 		die()
 
 func die() -> void:
+	# Primero intentamos soltar munición
+	_try_drop_ammo()
+
+	# Aquí luego podrás meter animación, sonido, partículas, etc.
 	queue_free()
+
+
+func _try_drop_ammo() -> void:
+	if ammo_drop_scene == null:
+		return
+
+	# randf() devuelve un float entre 0 y 1.
+	if randf() > ammo_drop_chance:
+		return
+
+	var pickup := ammo_drop_scene.instantiate()
+	get_tree().current_scene.add_child(pickup)
+
+	# Lo colocamos donde muere el enemigo
+	if pickup is Node3D:
+		pickup.global_position = global_position
+
+	# Le damos una cantidad aleatoria de balas si el script lo soporta
+	var amount := randi_range(ammo_drop_min, ammo_drop_max)
+
+	if pickup.has_method("set_ammo_amount"):
+		pickup.set_ammo_amount(amount)
+	elif "ammo_amount" in pickup:
+		pickup.ammo_amount = amount

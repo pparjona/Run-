@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://bcru5pxtsf8pw"]
+
+[ext_resource type="Script" uid="uid://wycxfnh0rxlv" path="res://Scenes/loot/AmmoPickup.gd" id="1_5r0th"]
+[ext_resource type="PackedScene" uid="uid://podksbibw5oq" path="res://Scenes/loot/Ammo.tscn" id="2_y06sl"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2wcy5"]
+
+[node name="AmmoPickup" type="Area3D" groups=["AmmoPickup"]]
+script = ExtResource("1_5r0th")
+
+[node name="Ammo" type="Node3D" parent="."]
+
+[node name="Sketchfab_Scene" parent="Ammo" instance=ExtResource("2_y06sl")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47450483, 0)
+shape = SubResource("BoxShape3D_2wcy5")

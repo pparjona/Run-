@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://frklwbf6lxbx"]
+[gd_scene load_steps=6 format=3 uid="uid://frklwbf6lxbx"]
 
 [ext_resource type="Script" uid="uid://dovwfyq7qbh5l" path="res://Scripts/Enemy.gd" id="1_16wso"]
+[ext_resource type="PackedScene" uid="uid://bcru5pxtsf8pw" path="res://Scenes/loot/AmmoPickup.tscn" id="2_dc3hb"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7fd37"]
 albedo_color = Color(0, 0.6361869, 0.39621857, 1)
@@ -11,6 +12,7 @@ albedo_color = Color(0, 0.6361869, 0.39621857, 1)
 
 [node name="Enemy" type="CharacterBody3D" groups=["Enemy"]]
 script = ExtResource("1_16wso")
+ammo_drop_scene = ExtResource("2_dc3hb")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 material_override = SubResource("StandardMaterial3D_7fd37")

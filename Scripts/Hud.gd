@@ -25,8 +25,5 @@ func set_has_gun(has_gun: bool) -> void:
 		ammo_value.text = "--"
 
 
-func update_ammo(current: int, max_ammo: int) -> void:
-	if max_ammo > 0:
-		ammo_value.text = "%d / %d" % [current, max_ammo]
-	else:
-		ammo_value.text = "--"
+func update_ammo(current_clip: int, reserve: int) -> void:
+	ammo_value.text = "%d / %d" % [current_clip, reserve]
