@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b16py4rpetacd"]
+
+[ext_resource type="PackedScene" uid="uid://s5ma4c0a02vf" path="res://Assets/Bullet/Models/9mm_bullet.glb" id="1_v047x"]
+
+[node name="Sketchfab_Scene" instance=ExtResource("1_v047x")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)

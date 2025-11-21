@@ -334,46 +334,51 @@ func shoot():
 	if gun_holder.get_child_count() == 0:
 		print("No hay arma equipada en gun_holder")
 		return
-	var equipped_gun := gun_holder.get_child(0)
+	var equipped_gun: Node3D = gun_holder.get_child(0)
 
 	# Activar cooldown de disparo
 	can_shoot = false
 
-	# --- DISPARO VISUAL: ANIMACIÓN ---
+	# --- DISPARO VISUAL: ANIMACIÓN + SONIDO ---
 	var anim_player: AnimationPlayer = equipped_gun.get_node_or_null("AnimationPlayer")
 	if anim_player and anim_player.has_animation("shoot"):
-		anim_player.stop() # por si estaba a medias
+		anim_player.stop()
 		anim_player.play("shoot")
-		var audio_shoot: AudioStreamPlayer3D = equipped_gun.get_node_or_null("AudioShoot")
-		if audio_shoot:
-			audio_shoot.stop()
-			audio_shoot.play()
 
-	# --- DISPARO VISUAL: FLASH DE LUZ ---
-	_flash_muzzle(equiped_gun)
+	var audio_shoot: AudioStreamPlayer3D = equipped_gun.get_node_or_null("AudioShoot")
+	if audio_shoot:
+		audio_shoot.stop()
+		audio_shoot.play()
+
+	# --- FLASH DE LUZ ---
+	_flash_muzzle(equipped_gun)
 
 	# --- DISPARO LÓGICO: BALA ---
 	var muzzle: Node3D = equipped_gun.get_node_or_null("Muzzle")
+	# Si en tu escena es "Pistol/Muzzle", usa esa ruta:
+	# var muzzle: Node3D = equipped_gun.get_node_or_null("Pistol/Muzzle")
+
 	if muzzle == null:
 		print("ERROR: El arma equipada no tiene nodo 'Muzzle'")
 		can_shoot = true
 		return
 
-	var bullet = BULLET_SCENE.instantiate()
-	var muzzle_transform = muzzle.global_transform
+	var bullet: CharacterBody3D = BULLET_SCENE.instantiate()
 
-	# Dirección de la bala (eje -Z local del Muzzle)
-	bullet.direction = -muzzle_transform.basis.z.normalized()
+	# IMPORTANTE:
+	# Le copiamos TODA la transform del Muzzle (posición + rotación)
+	# Así la bala "nace" orientada igual que el cañón.
+	bullet.global_transform = muzzle.global_transform
 
-	# Añadir la bala a la escena principal
-	get_tree().root.add_child(bullet)
-	bullet.global_transform.origin = muzzle_transform.origin
+	# Añadir la bala a la escena actual
+	get_tree().current_scene.add_child(bullet)
 
-	# Restar una bala del cargador
+
+	# 6) Restar bala del cargador y actualizar HUD
 	current_ammo_in_clip -= 1
 	ammo_changed.emit(current_ammo_in_clip, max_ammo_in_clip)
 
-	# Esperar el cooldown antes de permitir otro disparo
+	# 7) Cooldown de disparo
 	await get_tree().create_timer(shoot_cooldown).timeout
 	can_shoot = true
 
