@@ -6,7 +6,6 @@ var on = false
 @onready var flash_light_click: AudioStreamPlayer3D = $FlashLightClick
 
 
-
 func _ready() -> void:
 	flashlight.light_energy = 0.0
 

@@ -1,9 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://bs72ogkvdd7d6"]
+[gd_scene load_steps=7 format=3 uid="uid://bs72ogkvdd7d6"]
 
 [ext_resource type="Script" uid="uid://bhwc16c8hxhrr" path="res://Scripts/Proto_controller.gd" id="1_ucva2"]
-[ext_resource type="Texture2D" uid="uid://byyf75v5iiw7g" path="res://Textures/Lights/flashlight_light.jpg" id="2_gp6yy"]
-[ext_resource type="Script" path="res://Scripts/Flashlight.gd" id="3_0i1f7"]
-[ext_resource type="AudioStream" uid="uid://bbr71xjjpv3d4" path="res://Sounds/linterna.mp3" id="4_46x1p"]
+[ext_resource type="PackedScene" uid="uid://b51huu0ma1f6c" path="res://Scenes/Player/FlashLight.tscn" id="2_lxv02"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
 albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
@@ -42,22 +40,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 [node name="EquipedGun" type="Node3D" parent="Head/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19462585, -0.3906331, -0.8607975)
 
-[node name="Flashlight" type="SpotLight3D" parent="Head/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.57541823, -0.82988214, 0)
-light_color = Color(0.75338876, 0.7689847, 0.6576852, 1)
-light_energy = 3.0
-light_volumetric_fog_energy = 1.5
-light_projector = ExtResource("2_gp6yy")
-light_specular = 1.0
-shadow_enabled = true
-spot_range = 50.0
-spot_angle = 40.0
-script = ExtResource("3_0i1f7")
-
-[node name="FlashLightClick" type="AudioStreamPlayer3D" parent="Head/Camera3D/Flashlight"]
-stream = ExtResource("4_46x1p")
-volume_db = 15.0
-unit_size = 13.0
+[node name="Flashlight" parent="Head/Camera3D" instance=ExtResource("2_lxv02")]
+transform = Transform3D(-0.007539518, 0, -0.4999432, 0, 0.5, 0, 0.4999432, 0, -0.007539518, -0.39506838, -0.5650008, -0.38745585)
 
 [node name="PickUpDetector" type="Area3D" parent="."]
 
