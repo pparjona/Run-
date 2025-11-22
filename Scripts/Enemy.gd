@@ -1,9 +1,9 @@
 extends CharacterBody3D
 
-@export var move_speed: float = 7.0                   # velocidad base (reducimos para más natural)
+@export var move_speed: float = 2.5                   # velocidad base (reducimos para más natural)
 @export var steering_smooth: float = 6.0              # suavizado de movimiento
-@export var separation_strength: float = 6.0          # fuerza para evitar apelotonamientos
-@export var separation_radius: float = 2.5            # distancia para repelerse
+@export var separation_strength: float = 1.5          # fuerza para evitar apelotonamientos
+@export var separation_radius: float = 0.5            # distancia para repelerse
 
 @export var waypoint_tolerance: float = 0.8
 @export var height_offset: float = 2.0
@@ -16,6 +16,8 @@ extends CharacterBody3D
 @export var ammo_drop_min: int = 5            # mínimo de balas
 @export var ammo_drop_max: int = 15           # máximo de balas
 
+
+@onready var animation_player: AnimationPlayer = $Normal_Enemy_Walking/AnimationPlayer
 
 @export var max_health: int = 100
 var current_health: int = 0
@@ -32,8 +34,10 @@ var _time_since_last_repath: float = 0.0
 
 var _last_position: Vector3
 var _time_since_progress: float = 0.0
+var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
 func _ready() -> void:
+	animation_player.play("mixamo_com")
 	current_health = max_health
 
 func set_target_and_maze(p_target: Node3D, p_maze: Maze) -> void:
@@ -46,7 +50,11 @@ func set_target_and_maze(p_target: Node3D, p_maze: Maze) -> void:
 func _physics_process(delta: float) -> void:
 	if target == null or maze == null:
 		return
-
+	
+	# Gravedad
+	if not is_on_floor():
+		velocity.y -= gravity * delta
+		
 	_time_since_last_repath += delta
 	_time_since_progress += delta
 

@@ -37,6 +37,7 @@ GunPickup=""
 Enemy=""
 Player=""
 AmmoPickup=""
+head=""
 
 [input]
 
