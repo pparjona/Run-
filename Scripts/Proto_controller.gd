@@ -91,7 +91,7 @@ var gun_pickup_in_range = null # Guarda el arma que podemos recoger
 @onready var gun_holder = $Head/Camera3D/EquipedGun
 @onready var pickup_detector = $PickUpDetector
 @onready var equiped_gun: Node3D = $Head/Camera3D/EquipedGun
-
+@onready var aim_ray: RayCast3D = $Head/Camera3D/aim_ray
 
 # ---------------------------------------
 # READY
@@ -369,7 +369,21 @@ func shoot():
 	# Le copiamos TODA la transform del Muzzle (posición + rotación)
 	# Así la bala "nace" orientada igual que el cañón.
 	bullet.global_transform = muzzle.global_transform
-
+	
+	#Calculamos hacia DÓNDE debe mirar la bala
+	var target_point: Vector3
+	
+	if aim_ray.is_colliding():
+		# Si el RayCast choca con algo (pared, enemigo), ese es el objetivo
+		target_point = aim_ray.get_collision_point()
+	else:
+		# Si estamos mirando al cielo/vacío, el objetivo es el punto final del RayCast
+		# "to_global" convierte la coordenada local del punto final a coordenadas del mundo
+		target_point = aim_ray.to_global(aim_ray.target_position)
+	
+	#Hacemos que la bala mire a ese punto
+	bullet.look_at_from_position(target_point, Vector3.UP)
+	
 	# Añadir la bala a la escena actual
 	get_tree().current_scene.add_child(bullet)
 

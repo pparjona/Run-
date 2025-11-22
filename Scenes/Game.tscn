@@ -15,7 +15,6 @@
 [ext_resource type="Script" uid="uid://cb65mhiyf4qix" path="res://Scripts/Enemy_manager.gd" id="11_dahhg"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3so38"]
-energy_multiplier = 0.07
 
 [sub_resource type="Sky" id="Sky_3so38"]
 sky_material = SubResource("ProceduralSkyMaterial_3so38")
@@ -26,7 +25,6 @@ background_color = Color(0.7306387, 0.4360749, 0.33801955, 1)
 sky = SubResource("Sky_3so38")
 tonemap_mode = 2
 glow_enabled = true
-volumetric_fog_enabled = true
 volumetric_fog_density = 0.14
 volumetric_fog_albedo = Color(0.4244187, 0.42441872, 0.4244187, 1)
 volumetric_fog_emission = Color(0.31579703, 0.315797, 0.31579694, 1)

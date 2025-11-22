@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://7bonvm62mrv1"]
 
 [ext_resource type="PackedScene" uid="uid://cjx4rvwvc44ef" path="res://Assets/Pistol/Models/Pistol.glb" id="1_l7qi8"]
-[ext_resource type="Script" uid="uid://bbaybnm7jhx20" path="res://Scenes/Pistol/equiped_gun.gd" id="2_w2rc6"]
+[ext_resource type="Script" uid="uid://bbaybnm7jhx20" path="res://Scripts/equiped_gun.gd" id="2_w2rc6"]
 [ext_resource type="AudioStream" uid="uid://uxxiyxnen1pb" path="res://Sounds/disparoPistolaNormal.mp3" id="3_4u80v"]
 [ext_resource type="AudioStream" uid="uid://evjjrnkesjfg" path="res://Sounds/recargaPistola.mp3" id="4_esf8i"]
 

@@ -38,10 +38,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 [node name="Camera3D" type="Camera3D" parent="Head"]
 
 [node name="EquipedGun" type="Node3D" parent="Head/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19462585, -0.3906331, -0.8607975)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19462585, -0.3417133, -0.8607975)
 
 [node name="Flashlight" parent="Head/Camera3D" instance=ExtResource("2_lxv02")]
 transform = Transform3D(-0.007539518, 0, -0.4999432, 0, 0.5, 0, 0.4999432, 0, -0.007539518, -0.39506838, -0.5650008, -0.38745585)
+
+[node name="aim_ray" type="RayCast3D" parent="Head/Camera3D"]
+target_position = Vector3(0, -0.8, -100)
 
 [node name="PickUpDetector" type="Area3D" parent="."]
 
