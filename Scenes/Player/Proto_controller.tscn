@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://bs72ogkvdd7d6"]
 
 [ext_resource type="Script" uid="uid://bhwc16c8hxhrr" path="res://Scripts/Proto_controller.gd" id="1_ucva2"]
-[ext_resource type="PackedScene" uid="uid://b51huu0ma1f6c" path="res://Scenes/Player/FlashLight.tscn" id="2_lxv02"]
+[ext_resource type="PackedScene" uid="uid://crfyxtc6thhoa" path="res://Scenes/Player/Flashlight.tscn" id="2_ddi6p"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
 albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
@@ -40,11 +40,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 [node name="EquipedGun" type="Node3D" parent="Head/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19462585, -0.3417133, -0.8607975)
 
-[node name="Flashlight" parent="Head/Camera3D" instance=ExtResource("2_lxv02")]
-transform = Transform3D(-0.007539518, 0, -0.4999432, 0, 0.5, 0, 0.4999432, 0, -0.007539518, -0.39506838, -0.5650008, -0.38745585)
-
 [node name="aim_ray" type="RayCast3D" parent="Head/Camera3D"]
 target_position = Vector3(0, -0.8, -100)
+
+[node name="Flashlight" parent="Head/Camera3D" instance=ExtResource("2_ddi6p")]
+transform = Transform3D(-1.1279937, 0, 2.7798612, 0, 2.9999998, 0, -2.7798612, 0, -1.1279937, -0.3952551, -0.6101618, -0.31590784)
 
 [node name="PickUpDetector" type="Area3D" parent="."]
 
