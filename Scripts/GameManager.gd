@@ -16,13 +16,13 @@ var master_volume: float = 1.0
 
 signal state_changed(old_state: GameState, new_state: GameState)
 
-# REFERENCIAS GLOBALES (NUEVO)
+# REFERENCIAS GLOBALES
 var player: Node = null
 var hud: CanvasLayer = null
 
 
 # -------------------------
-# CAMBIO DE ESCENAS (para más adelante)
+# CAMBIO DE ESCENAS
 # -------------------------
 func _change_scene(path: String, new_state: GameState) -> void:
 	var old := state
@@ -38,11 +38,14 @@ func goto_menu() -> void:
 func start_game() -> void:
 	_change_scene(GAME_SCENE, GameState.PLAYING)
 
+
 func goto_settings() -> void:
 	_change_scene(SETTINGS_SCENE, GameState.MENU)
 
+
 func game_over() -> void:
 	_change_scene(END_SCENE, GameState.GAME_OVER)
+
 
 func game_won() -> void:
 	_change_scene(END_SCENE, GameState.VICTORY)
@@ -65,7 +68,7 @@ func resume_game() -> void:
 
 
 # -------------------------
-# REGISTRO DE PLAYER Y HUD  (NUEVO)
+# REGISTRO DE PLAYER Y HUD
 # -------------------------
 func register_player(p: Node) -> void:
 	player = p
@@ -82,24 +85,23 @@ func _connect_player_to_hud() -> void:
 		return
 
 	# Conexiones de señales Player -> HUD
-	# (suponiendo que el player tiene esas señales)
 	player.health_changed.connect(hud.update_health)
 	player.gun_equipped.connect(hud.set_has_gun)
 	player.ammo_changed.connect(hud.update_ammo)
 
-	# Forzamos estado inicial en el HUD
+	# Estado inicial en el HUD
 	hud.update_health(player.health, player.max_health)
 	hud.set_has_gun(player.has_gun)
-	hud.update_ammo(player.current_ammo_in_clip, player.max_ammo_in_clip)
+	# Aquí cambiamos max_ammo_in_clip por reserve_ammo
+	hud.update_ammo(player.current_ammo_in_clip, player.reserve_ammo)
 
 
 # -------------------------
-# EVENTOS GLOBALES DEL JUEGO (NUEVO)
+# EVENTOS GLOBALES DEL JUEGO
 # -------------------------
 func on_player_died() -> void:
 	print("GameManager: el jugador ha muerto")
-	# MÁS ADELANTE: aquí llamaremos a game_over() cuando exista la escena final
-	# game_over()
+	# Más adelante: game_over()
 
 
 func on_player_escaped() -> void:

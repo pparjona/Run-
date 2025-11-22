@@ -438,6 +438,10 @@ func add_ammo(amount: int) -> void:
 	reserve_ammo += amount
 	print("Has recogido ", amount, " balas. Reserva total:", reserve_ammo)
 
+	#actualizar el HUD al instante
+	ammo_changed.emit(current_ammo_in_clip, reserve_ammo)
+
+
 
 
 func _flash_muzzle(equipped_gun: Node3D) -> void:

@@ -209,9 +209,11 @@ func _try_drop_ammo() -> void:
 	var pickup := ammo_drop_scene.instantiate()
 	get_tree().current_scene.add_child(pickup)
 
-	# Lo colocamos donde muere el enemigo
 	if pickup is Node3D:
-		pickup.global_position = global_position
+		var pos := global_position
+		# Ajusta esta Y según la altura del suelo // tal como esta y=0
+		pos.y = 0
+		pickup.global_position = pos
 
 	# Le damos una cantidad aleatoria de balas si el script lo soporta
 	var amount := randi_range(ammo_drop_min, ammo_drop_max)
