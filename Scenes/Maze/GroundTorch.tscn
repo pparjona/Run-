@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://crvoa13oq3rlh"]
+
+[ext_resource type="PackedScene" uid="uid://dpqgut5ffjkqf" path="res://Assets/GroundTorch/groundTorch.glb" id="1_l2aym"]
+[ext_resource type="Script" uid="uid://b5mggslwxi30s" path="res://Scenes/Maze/TorchLight.gd" id="2_47upt"]
+
+[node name="GroundTorch" instance=ExtResource("1_l2aym")]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+
+[node name="flame" parent="Sketchfab_model/c1cb2eed357648aabc00ea91eb89f43a_fbx/Object_2/RootNode" index="0"]
+transform = Transform3D(0.97567827, 0.33160284, 0, -0.25557783, 1.2659067, 0, 0, 0, 0.99716944, 1.5743941, -1.2056718, 1027.4723)
+visible = false
+
+[node name="AnimationPlayer" parent="." index="1"]
+speed_scale = 1.2
+
+[node name="TorchLight" type="OmniLight3D" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.025254726, 9.249678, 0.047597885)
+visible = false
+light_color = Color(0.9725128, 0.47981125, 1.732707e-06, 1)
+light_bake_mode = 0
+shadow_enabled = true
+shadow_opacity = 0.1
+omni_range = 10.0
+omni_attenuation = 0.8
+script = ExtResource("2_47upt")
+base_energy = 1.0

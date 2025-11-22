@@ -10,6 +10,8 @@ extends Node3D
 @onready var player: Node3D = $Player
 @onready var enemy_manager: Node = $EnemyManager
 
+var _arena_event_triggered: bool = false
+
 func _ready() -> void:
 	# 1) Colocar al jugador en la entrada del laberinto
 	var start_pos: Vector3 = maze.get_player_start_position(2.0)
@@ -51,12 +53,14 @@ func _ready() -> void:
 
 	# 4) Configurar EnemyManager (enemigos normales)
 	if enemy_manager:
-		# Si ya has asignado maze, player y enemy_scene en el inspector,
-		# esto sería opcional, pero no hace daño.
 		if enemy_manager.has_method("set"):
 			enemy_manager.set("maze", maze)
 			enemy_manager.set("player", player)
 			enemy_manager.set("enemy_scene", normal_enemy_scene)
+		
+		# --- ESTO FALTABA: Conectar señal de fin de oleadas ---
+		if enemy_manager.has_signal("all_waves_cleared"):
+			enemy_manager.all_waves_cleared.connect(_on_all_waves_cleared)
 
 	# 5) Instanciar el BOSS inicial en la esquina opuesta (celda de salida interna)
 	_spawn_boss_at_opposite_corner()
@@ -80,13 +84,62 @@ func _spawn_boss_at_opposite_corner() -> void:
 
 
 func _on_player_entered_plaza() -> void:
-	print("Game: el jugador ha llegado a la plaza. Empezamos oleadas.")
+	# Si ya se activó, no hacemos nada
+	if _arena_event_triggered:
+		return
+	
+	_arena_event_triggered = true
+	await get_tree().create_timer(1.0).timeout
+	print("Game: ¡Encendiendo Arena!")
+	
+	# ACTIVAR: Muestra fuego y luces con sus valores por defecto
+	_set_arena_torches_active(true)
+
 	if enemy_manager and enemy_manager.has_method("start_waves"):
 		enemy_manager.start_waves()
 
 
+func _on_all_waves_cleared() -> void:
+	await get_tree().create_timer(1.0).timeout
+	print("Game: Apagando Fuego y Luces...")
+	_set_arena_torches_active(false)
+
+func _set_arena_torches_active(is_active: bool) -> void:
+	var torches = get_tree().get_nodes_in_group("ArenaTorches")
+	for t in torches:
+		# 1. Luz
+		var light = t.get_node_or_null("TorchLight")
+		if light:
+			light.visible = is_active
+		
+		# 2. Fuego (Visual)
+		var flame = _find_node_by_name(t, "flame")
+		if flame:
+			flame.visible = is_active
+			
+		# 3. ### NUEVO: Reproducir Animación "Burning" ###
+		# Buscamos el AnimationPlayer (suele estar en la raíz o cerca)
+		var anim = t.get_node_or_null("AnimationPlayer")
+		if anim:
+			if is_active:
+				# Si no se está reproduciendo ya, dale al play
+				if anim.current_animation != "Burning":
+					anim.play("Burning")
+			else:
+				# Parar animación al apagar
+				anim.stop()
+
+# Función auxiliar para encontrar nodos profundos (como tu "flame" dentro del modelo)
+func _find_node_by_name(root: Node, name_to_find: String) -> Node:
+	if root.name == name_to_find:
+		return root
+	for child in root.get_children():
+		var found = _find_node_by_name(child, name_to_find)
+		if found:
+			return found
+			
+	return null
+
 func _on_player_escaped() -> void:
 	print("Game: el jugador ha escapado.")
 	GameManager.on_player_escaped()
-	print("Game: el jugador ha escapado. Aquí cambiamos de escena o mostramos fin de partida.")
-	# TODO: cambiar a escena de victoria / volver al menú

@@ -12,6 +12,9 @@ class_name Maze
 @export_range(0.0, 1.0, 0.01) var torch_probability: float = 0.04
 @export var torch_height: float = 2.0
 
+@export var arena_torch_scene: PackedScene
+var arena_torch_height_offset: float = -0.6
+
 # Altura y grosor de paredes (en unidades del mundo)
 @export var wall_height: float = 4.0
 @export var wall_thickness: float = 6.0  # normalmente igual a cell_size
@@ -41,6 +44,7 @@ func _ready() -> void:
 	_collect_walkable_cells()
 	_build_maze()
 	_place_torches()
+	_spawn_arena_torches()
 
 func _init_grid() -> void:
 	grid.clear()
@@ -392,3 +396,29 @@ func _place_torches() -> void:
 		var forward: Vector3 = -dir3d
 		torch.look_at(torch.global_position + forward, Vector3.UP)
 		torch.rotate_y(PI)#Esto es por que genera las antorchas con 180 grados y asi se corrgie y mira hacia fuera
+
+func _spawn_arena_torches() -> void:
+	if arena_torch_scene == null: return
+
+	@warning_ignore("integer_division")
+	var half_w: int = room_width_cells / 2
+	@warning_ignore("integer_division")
+	var half_h: int = room_height_cells / 2
+	
+	var min_x = center_cell.x - half_w
+	var max_x = center_cell.x + half_w
+	var min_y = center_cell.y - half_h
+	var max_y = center_cell.y + half_h
+
+	for y in range(min_y, max_y + 1):
+		for x in range(min_x, max_x + 1):
+			var is_edge = (x == min_x or x == max_x or y == min_y or y == max_y)
+			
+			if is_edge:
+				var cell = Vector2i(x, y)
+				var torch_pos = cell_to_world(cell, arena_torch_height_offset)
+				
+				var torch = arena_torch_scene.instantiate()
+				add_child(torch)
+				torch.global_position = torch_pos
+				torch.add_to_group("ArenaTorches")
