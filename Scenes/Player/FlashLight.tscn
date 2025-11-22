@@ -1,26 +1,26 @@
-[gd_scene load_steps=5 format=3 uid="uid://b51huu0ma1f6c"]
+[gd_scene load_steps=5 format=3 uid="uid://crfyxtc6thhoa"]
 
-[ext_resource type="PackedScene" uid="uid://b4qby4qayhv5u" path="res://Assets/Flashlight/tactical_flashlight.glb" id="1_roght"]
-[ext_resource type="Texture2D" uid="uid://byyf75v5iiw7g" path="res://Textures/Lights/flashlight_light.jpg" id="2_7xe2q"]
-[ext_resource type="Script" uid="uid://bc08ojk0uo874" path="res://Scripts/Flashlight.gd" id="3_5gtgo"]
-[ext_resource type="AudioStream" uid="uid://bbr71xjjpv3d4" path="res://Sounds/linterna.mp3" id="4_lbbiy"]
+[ext_resource type="PackedScene" uid="uid://bs4w67v5jkoq4" path="res://Assets/Flashlight/flashlight.glb" id="1_3qyox"]
+[ext_resource type="Texture2D" uid="uid://byyf75v5iiw7g" path="res://Textures/Lights/flashlight_light.jpg" id="2_ww0lf"]
+[ext_resource type="Script" uid="uid://bc08ojk0uo874" path="res://Scripts/Flashlight.gd" id="3_nv3k4"]
+[ext_resource type="AudioStream" uid="uid://bbr71xjjpv3d4" path="res://Sounds/linterna.mp3" id="4_uqgx2"]
 
-[node name="Flashlight" instance=ExtResource("1_roght")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+[node name="Flashlight" instance=ExtResource("1_3qyox")]
+transform = Transform3D(2.7784617, 0, 1.1314375, 0, 3, 0, -1.1314375, 0, 2.7784617, 0, 0, 0)
 
 [node name="Flashlight" type="SpotLight3D" parent="." index="1"]
-transform = Transform3D(-0.27773735, 0.06470648, 0.95847523, 0.018009147, 0.9979043, -0.062149815, -0.9604881, -3.208827e-09, -0.27832064, -0.37330118, -0.0005833283, 0)
+transform = Transform3D(-0.38239744, -0.050559573, -0.9226137, 0.018009149, 0.99790436, -0.06214981, 0.92382246, -0.040381417, -0.38068554, 0.070478864, 0.015609965, 0.027049074)
 light_color = Color(0.75338876, 0.7689847, 0.6576852, 1)
 light_energy = 3.0
 light_volumetric_fog_energy = 1.5
-light_projector = ExtResource("2_7xe2q")
+light_projector = ExtResource("2_ww0lf")
 light_specular = 1.0
 shadow_enabled = true
 spot_range = 50.0
 spot_angle = 40.0
-script = ExtResource("3_5gtgo")
+script = ExtResource("3_nv3k4")
 
 [node name="FlashLightClick" type="AudioStreamPlayer3D" parent="Flashlight" index="0"]
-stream = ExtResource("4_lbbiy")
+stream = ExtResource("4_uqgx2")
 volume_db = 15.0
 unit_size = 13.0
