@@ -10,6 +10,10 @@ const GAME_SCENE      := "res://Scenes/Game.tscn"
 const SETTINGS_SCENE  := "res://Scenes/Settings.tscn"
 const END_SCENE       := "res://Scenes/EndScreen.tscn"
 
+var menu_music_stream = preload("res://Sounds/Musica/musicaMenu2.mp3")
+var game_music_stream = preload("res://Sounds/Musica/musicaAmbiente.mp3")
+var music_player: AudioStreamPlayer
+
 # Ejemplo de datos globales que pueden interesar
 var difficulty: int = 1
 var master_volume: float = 1.0
@@ -20,6 +24,9 @@ signal state_changed(old_state: GameState, new_state: GameState)
 var player: Node = null
 var hud: CanvasLayer = null
 
+func _ready() -> void:
+	if state == GameState.MENU:
+		_play_music(menu_music_stream)
 
 # -------------------------
 # CAMBIO DE ESCENAS
@@ -32,22 +39,27 @@ func _change_scene(path: String, new_state: GameState) -> void:
 
 
 func goto_menu() -> void:
+	_play_music(menu_music_stream)
 	_change_scene(MAIN_MENU_SCENE, GameState.MENU)
 
 
 func start_game() -> void:
+	_play_music(game_music_stream)
 	_change_scene(GAME_SCENE, GameState.PLAYING)
 
 
 func goto_settings() -> void:
+	_play_music(menu_music_stream)
 	_change_scene(SETTINGS_SCENE, GameState.MENU)
 
 
 func game_over() -> void:
+	_destroy_music()
 	_change_scene(END_SCENE, GameState.GAME_OVER)
 
 
 func game_won() -> void:
+	_destroy_music()
 	_change_scene(END_SCENE, GameState.VICTORY)
 
 
@@ -67,6 +79,47 @@ func resume_game() -> void:
 		state_changed.emit(old, state)
 
 
+# -------------------------
+# LÓGICA DE MÚSICA
+# -------------------------
+func _play_music(stream_to_play: AudioStream) -> void:
+	# 1. Calculamos el volumen correcto para esta canción
+	var target_db = _calculate_volume_db(stream_to_play)
+	# 2. Si ya existe el reproductor
+	if music_player != null:
+		if music_player.stream == stream_to_play and music_player.playing:
+			# Si es la misma canción, solo actualizamos el volumen (por si cambió el master)
+			music_player.volume_db = target_db
+			return
+		else:
+			# Cambio de canción: paramos, cambiamos stream y volumen
+			music_player.stop()
+			music_player.stream = stream_to_play
+			music_player.volume_db = target_db
+			music_player.play()
+	# 3. Si no existe, lo creamos
+	else:
+		music_player = AudioStreamPlayer.new()
+		add_child(music_player)
+		music_player.stream = stream_to_play
+		music_player.bus = "Master"
+		music_player.volume_db = target_db
+		music_player.play()
+
+func _destroy_music() -> void:
+	# Si existe, lo eliminamos por completo para ahorrar recursos
+	if music_player != null:
+		music_player.stop()
+		music_player.queue_free()
+		music_player = null
+
+func _calculate_volume_db(stream: AudioStream) -> float:
+	var base_db = linear_to_db(master_volume)
+	if stream == game_music_stream:
+		return (base_db - 8.0)
+	
+	# Si es cualquier otra (menú), usamos el volumen master tal cual
+	return base_db
 # -------------------------
 # REGISTRO DE PLAYER Y HUD
 # -------------------------

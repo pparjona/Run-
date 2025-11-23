@@ -16,6 +16,7 @@ class_name Maze
 var arena_torch_height_offset: float = -0.6
 
 # Altura y grosor de paredes (en unidades del mundo)
+@export_range(0.0, 1.0) var braiding_chance: float = 0.1#Probabilidad de romper muros al generar para que no existan tantos pasillos sin salida
 @export var wall_height: float = 4.0
 @export var wall_thickness: float = 6.0  # normalmente igual a cell_size
 
@@ -41,6 +42,7 @@ func _ready() -> void:
 	_generate_maze()
 	_carve_center_room()
 	_carve_exit()
+	_create_loops()
 	_collect_walkable_cells()
 	_build_maze()
 	_place_torches()
@@ -96,6 +98,34 @@ func _generate_maze() -> void:
 			grid[chosen.y][chosen.x] = 1
 
 			stack.push_back(chosen)
+
+func _create_loops() -> void:
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	
+	# Recorremos el interior del laberinto (evitando los bordes externos)
+	for y in range(1, height - 1):
+		for x in range(1, width - 1):
+			if grid[y][x] == 0:
+				# Comprobamos sus vecinos directos
+				var path_up = grid[y-1][x] == 1
+				var path_down = grid[y+1][x] == 1
+				var path_left = grid[y][x-1] == 1
+				var path_right = grid[y][x+1] == 1
+				var can_break = false
+				# Caso 1: Pared vertical separando dos pasillos horizontales (Izquierda <-> Derecha)
+				# (Y que arriba y abajo sean paredes para mantener forma de pasillo)
+				if path_left and path_right and not path_up and not path_down:
+					can_break = true
+				# Caso 2: Pared horizontal separando dos pasillos verticales (Arriba <-> Abajo)
+				# (Y que a los lados sean paredes)
+				if path_up and path_down and not path_left and not path_right:
+					can_break = true
+				# Si la pared es candidata, aplicamos la probabilidad
+				if can_break:
+					if rng.randf() < braiding_chance:
+						grid[y][x] = 1 # ¡Rompemos la pared!
+
 
 func _is_in_bounds(cell: Vector2i) -> bool:
 	return cell.x > 0 and cell.x < width - 1 and cell.y > 0 and cell.y < height - 1
