@@ -7,7 +7,7 @@ albedo_color = Color(1, 0, 0, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wovta"]
 
-[node name="Enemy" type="CharacterBody3D" groups=["Enemy"]]
+[node name="EnemyBoss" type="CharacterBody3D" groups=["Enemy"]]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 material_override = SubResource("StandardMaterial3D_7fd37")

@@ -16,11 +16,10 @@ speed_scale = 1.2
 [node name="TorchLight" type="OmniLight3D" parent="." index="2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.025254726, 9.249678, 0.047597885)
 visible = false
-light_color = Color(0.9725128, 0.47981125, 1.732707e-06, 1)
+light_color = Color(0.80435836, 0.5007747, 0.17584777, 1)
 light_bake_mode = 0
 shadow_enabled = true
 shadow_opacity = 0.1
-omni_range = 10.0
-omni_attenuation = 0.8
+omni_range = 25.0
 script = ExtResource("2_47upt")
-base_energy = 1.0
+base_energy = 3.0

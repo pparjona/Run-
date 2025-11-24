@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqhscky45urwq"]
+
+[ext_resource type="PackedScene" uid="uid://dkygbf6k0fp3b" path="res://Assets/NormalEnemy/Normal_Enemy_Walking.glb" id="1_nbjb3"]
+
+[node name="AssetEnemy" instance=ExtResource("1_nbjb3")]

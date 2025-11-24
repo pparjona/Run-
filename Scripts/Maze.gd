@@ -1,75 +1,125 @@
 extends Node3D
 class_name Maze
 
-@export var width: int = 31   # DEBE ser impar (21, 31, 41...)
-@export var height: int = 31  # DEBE ser impar
-@export var cell_size: float = 6.0  # tamaño físico de cada celda en el mundo 3D
+# --- CONFIGURACIÓN ---
+@export var width: int = 31
+@export var height: int = 31
+@export var cell_size: float = 6.0
 
 @export var wall_scene: PackedScene
 @export var floor_scene: PackedScene
 
-@export var torch_scene: PackedScene
+@export var wall_torch_scene: PackedScene
 @export_range(0.0, 1.0, 0.01) var torch_probability: float = 0.04
 @export var torch_height: float = 2.0
 
 @export var arena_torch_scene: PackedScene
-var arena_torch_height_offset: float = -0.6
+var arena_torch_height_offset: float = -0.7
 
-# Altura y grosor de paredes (en unidades del mundo)
-@export_range(0.0, 1.0) var braiding_chance: float = 0.1#Probabilidad de romper muros al generar para que no existan tantos pasillos sin salida
+@export_range(0.0, 1.0) var braiding_chance: float = 0.1
 @export var wall_height: float = 4.0
-@export var wall_thickness: float = 6.0  # normalmente igual a cell_size
+@export var wall_thickness: float = 6.0
 
-# Tamaño de la sala central, en celdas de grid
-@export var room_width_cells: int = 7    # mejor impar
-@export var room_height_cells: int = 7   # mejor impar
+@export var room_width_cells: int = 7
+@export var room_height_cells: int = 7
 
-var grid: Array = []      # grid[y][x] = 0 (pared) o 1 (pasillo)
+var grid: Array = []
 var start_cell: Vector2i = Vector2i(1, 1)
 var exit_cell: Vector2i = Vector2i(0, 0)
-var center_cell: Vector2i = Vector2i(0, 0) # centro de la “plaza”
+var center_cell: Vector2i = Vector2i(0, 0)
+var walkable_cells: Array = []
 
-var walkable_cells: Array = []  # lista de celdas donde se puede caminar (grid == 1)
-var _path_dirs := [ #Direcciones del pathfinding
-	Vector2i(1, 0),
-	Vector2i(-1, 0),
-	Vector2i(0, 1),
-	Vector2i(0, -1)
-]
+var _path_dirs := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+
+# Variable para guardar la región de navegación generada
+var nav_region: NavigationRegion3D
 
 func _ready() -> void:
+	# 1. Generamos los datos del laberinto
 	_init_grid()
 	_generate_maze()
 	_carve_center_room()
 	_carve_exit()
 	_create_loops()
 	_collect_walkable_cells()
-	_build_maze()
+	
+	# 2. Construimos el mundo físico Y la navegación
+	_build_maze_with_navigation()
+	
+	# 3. Decoración (Antorchas)
 	_place_torches()
 	_spawn_arena_torches()
 
+# ---------------------------------------------------------
+# CONSTRUCCIÓN FÍSICA + NAVEGACIÓN
+# ---------------------------------------------------------
+func _build_maze_with_navigation() -> void:
+	var total_width: float = float(width) * cell_size
+	var total_height: float = float(height) * cell_size
+
+	# 1. Crear dinámicamente el NavigationRegion3D
+	nav_region = NavigationRegion3D.new()
+	add_child(nav_region) # Lo hacemos hijo del nodo Maze
+	
+	# 2. Configurar el NavMesh (El mapa de donde se puede pisar)
+	var nav_mesh = NavigationMesh.new()
+	nav_mesh.agent_radius = 0.5       # Radio del enemigo (para que no se roce con paredes)
+	nav_mesh.agent_height = 2.0
+	nav_mesh.agent_max_climb = 0.5    # Pequeña ayuda para desniveles
+	
+	nav_mesh.cell_height = 0.02
+	# IMPORTANTE: "PARSED_GEOMETRY_STATIC_COLLIDERS" es la mejor opción 
+	# cuando usas StaticBody3D + MeshInstance3D (tus paredes y suelo nuevos)
+	nav_mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS
+	
+	nav_region.navigation_mesh = nav_mesh
+
+	# 3. Instanciar SUELO y hacerlo HIJO de nav_region
+	if floor_scene:
+		var floor_instance = floor_scene.instantiate()
+		nav_region.add_child(floor_instance) # <--- CLAVE: Hijo de la región
+		
+		# Posición y Escala
+		floor_instance.position = Vector3(total_width * 0.5, -0.5, total_height * 0.5)
+		# Escalamos el suelo base (que mide 1x1) al tamaño total
+		floor_instance.scale = Vector3(total_width, 1.0, total_height)
+
+	# 4. Instanciar PAREDES y hacerlas HIJAS de nav_region
+	if wall_scene:
+		for y in height:
+			for x in width:
+				if grid[y][x] == 0:
+					var wall_instance = wall_scene.instantiate()
+					nav_region.add_child(wall_instance) # <--- CLAVE: Hijo de la región
+
+					var wx: float = float(x) * cell_size
+					var wz: float = float(y) * cell_size
+
+					# Posición (Asumiendo que Wall.tscn ya tiene tamaño 6x4x6)
+					wall_instance.position = Vector3(wx, wall_height * 0.5, wz)
+
+	# 5. HORNEAR (BAKE)
+	# Esperamos un frame para asegurar que Godot ha colocado todo en la escena
+	await get_tree().process_frame
+	nav_region.bake_navigation_mesh()
+	print("Maze: Mapa de navegación horneado correctamente.")
+
+
+# ---------------------------------------------------------
+# LÓGICA DEL LABERINTO (NO TOCAR)
+# ---------------------------------------------------------
 func _init_grid() -> void:
 	grid.clear()
 	for y in height:
 		var row: Array = []
-		for x in width:
-			row.append(0) # todo paredes al principio
+		for x in width: row.append(0)
 		grid.append(row)
 
 func _generate_maze() -> void:
-	# Algoritmo DFS (backtracking) para generar el laberinto
 	var stack: Array = []
-
 	start_cell = Vector2i(1, 1)
 	grid[start_cell.y][start_cell.x] = 1
 	stack.push_back(start_cell)
-
-	var directions := [
-		Vector2i(1, 0),
-		Vector2i(-1, 0),
-		Vector2i(0, 1),
-		Vector2i(0, -1),
-	]
 
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
@@ -77,55 +127,35 @@ func _generate_maze() -> void:
 	while not stack.is_empty():
 		var current: Vector2i = stack.back()
 		var neighbors: Array = []
-
-		# Buscar vecinos a 2 celdas de distancia que sigan siendo paredes
-		for dir in directions:
+		for dir in _path_dirs:
 			var next: Vector2i = current + dir * 2
 			if _is_in_bounds(next) and grid[next.y][next.x] == 0:
 				neighbors.append(next)
-
 		if neighbors.is_empty():
-			# No hay vecinos disponibles, retroceder
 			stack.pop_back()
 		else:
-			# Elegir un vecino aleatorio
 			neighbors.shuffle()
 			var chosen: Vector2i = neighbors[0]
-
-			# Celda intermedia entre current y chosen (el muro que vamos a abrir)
 			var between: Vector2i = current + (chosen - current) / 2
 			grid[between.y][between.x] = 1
 			grid[chosen.y][chosen.x] = 1
-
 			stack.push_back(chosen)
 
 func _create_loops() -> void:
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
-	
-	# Recorremos el interior del laberinto (evitando los bordes externos)
 	for y in range(1, height - 1):
 		for x in range(1, width - 1):
 			if grid[y][x] == 0:
-				# Comprobamos sus vecinos directos
 				var path_up = grid[y-1][x] == 1
 				var path_down = grid[y+1][x] == 1
 				var path_left = grid[y][x-1] == 1
 				var path_right = grid[y][x+1] == 1
 				var can_break = false
-				# Caso 1: Pared vertical separando dos pasillos horizontales (Izquierda <-> Derecha)
-				# (Y que arriba y abajo sean paredes para mantener forma de pasillo)
-				if path_left and path_right and not path_up and not path_down:
-					can_break = true
-				# Caso 2: Pared horizontal separando dos pasillos verticales (Arriba <-> Abajo)
-				# (Y que a los lados sean paredes)
-				if path_up and path_down and not path_left and not path_right:
-					can_break = true
-				# Si la pared es candidata, aplicamos la probabilidad
-				if can_break:
-					if rng.randf() < braiding_chance:
-						grid[y][x] = 1 # ¡Rompemos la pared!
-
+				if path_left and path_right and not path_up and not path_down: can_break = true
+				if path_up and path_down and not path_left and not path_right: can_break = true
+				if can_break and rng.randf() < braiding_chance:
+					grid[y][x] = 1
 
 func _is_in_bounds(cell: Vector2i) -> bool:
 	return cell.x > 0 and cell.x < width - 1 and cell.y > 0 and cell.y < height - 1
@@ -133,299 +163,110 @@ func _is_in_bounds(cell: Vector2i) -> bool:
 func _is_inside_grid(cell: Vector2i) -> bool:
 	return cell.x >= 0 and cell.x < width and cell.y >= 0 and cell.y < height
 
-# ---------------------------------------------------------
-# Crear una sala abierta en el centro del laberinto
-# ---------------------------------------------------------
 func _carve_center_room() -> void:
-	# Centro del grid
 	@warning_ignore("integer_division")
 	var center_x: int = width / 2
 	@warning_ignore("integer_division")
 	var center_y: int = height / 2
 	center_cell = Vector2i(center_x, center_y)
-
-	# Mitad del tamaño de la sala en celdas
 	@warning_ignore("integer_division")
 	var half_w: int = room_width_cells / 2
 	@warning_ignore("integer_division")
 	var half_h: int = room_height_cells / 2
-
-	# Recorremos el rectángulo [center_x-half_w, center_x+half_w] x [center_y-half_h, center_y+half_h]
 	for y in range(center_y - half_h, center_y + half_h + 1):
 		for x in range(center_x - half_w, center_x + half_w + 1):
 			var cell := Vector2i(x, y)
-			if _is_inside_grid(cell):
-				grid[cell.y][cell.x] = 1  # lo marcamos como pasillo (espacio abierto)
+			if _is_inside_grid(cell): grid[cell.y][cell.x] = 1
 
-# ---------------------------------------------------------
-# Crear salida en la esquina opuesta al inicio
-# ---------------------------------------------------------
 func _carve_exit() -> void:
-	# Celda interior opuesta (esquina inferior derecha “interna”)
 	exit_cell = Vector2i(width - 2, height - 2)
-
-	# Aseguramos que esa celda sea pasillo
 	grid[exit_cell.y][exit_cell.x] = 1
-
-	# Abrimos un hueco en la pared exterior derecha junto a esa celda
-	# Esto será la "boca" del pasillo final
 	grid[exit_cell.y][width - 1] = 1
 
-# ---------------------------------------------------------
-# Recoger todas las celdas caminables
-# ---------------------------------------------------------
 func _collect_walkable_cells() -> void:
 	walkable_cells.clear()
 	for y in height:
 		for x in width:
-			if grid[y][x] == 1:
-				walkable_cells.append(Vector2i(x, y))
+			if grid[y][x] == 1: walkable_cells.append(Vector2i(x, y))
 
 # ---------------------------------------------------------
-# Construir geometría 3D
+# HELPERS PÚBLICOS
 # ---------------------------------------------------------
-func _build_maze() -> void:
-	var total_width: float = float(width) * cell_size
-	var total_height: float = float(height) * cell_size
-
-	# 1) Suelo grande
-	if floor_scene:
-		var floor_instance = floor_scene.instantiate()
-		add_child(floor_instance)
-
-		# Posicionamos el suelo en el centro del laberinto
-		floor_instance.position = Vector3(total_width * 0.5, -0.5, total_height * 0.5)
-		# Ajustamos el tamaño si es un CSGBox3D
-		floor_instance.set("size", Vector3(total_width, 1.0, total_height))
-
-	# 2) Paredes (bloques completos en las celdas grid[y][x] == 0)
-	if wall_scene:
-		for y in height:
-			for x in width:
-				if grid[y][x] == 0:
-					var wall_instance = wall_scene.instantiate()
-					add_child(wall_instance)
-
-					var wx: float = float(x) * cell_size
-					var wz: float = float(y) * cell_size
-
-					wall_instance.position = Vector3(wx, wall_height * 0.5, wz)
-					wall_instance.set("size", Vector3(wall_thickness, wall_height, wall_thickness))
-
-# ---------------------------------------------------------
-# Algoritmo de pathfinding
-# ---------------------------------------------------------
-func find_path_cells(start_cell: Vector2i, goal_cell: Vector2i) -> Array:
-	# Ajustar a celdas caminables cercanas
-	start_cell = _find_nearest_walkable(start_cell)
-	goal_cell = _find_nearest_walkable(goal_cell)
-	
-	if not _is_walkable(start_cell) or not _is_walkable(goal_cell):
-		return []
-
-	var queue: Array = []
-	queue.append(start_cell)
-	
-	var came_from: Dictionary = {}
-	came_from[start_cell] = start_cell
-
-	while not queue.is_empty():
-		var current: Vector2i = queue.pop_front()
-
-		if current == goal_cell:
-			break
-
-		for d in _path_dirs:
-			var next: Vector2i = current + d
-			if not _is_walkable(next):
-				continue
-			if came_from.has(next):
-				continue
-			
-			queue.append(next)
-			came_from[next] = current
-
-	if not came_from.has(goal_cell):
-		return []
-	
-	var path: Array = []
-	var cur: Vector2i = goal_cell
-	while true:
-		path.append(cur)
-		if cur == start_cell:
-			break
-		cur = came_from[cur]
-
-	path.reverse()
-	return path
-
-
-func _find_nearest_walkable(cell: Vector2i, max_radius: int = 2) -> Vector2i:
-	# Si ya es caminable, perfecto
-	if _is_walkable(cell):
-		return cell
-
-	# Buscar en anillos crecientes alrededor de la celda
-	for r in range(1, max_radius + 1):
-		for dy in range(-r, r + 1):
-			for dx in range(-r, r + 1):
-				var c := Vector2i(cell.x + dx, cell.y + dy)
-				if _is_walkable(c):
-					return c
-	# Si no hemos encontrado nada, devolvemos la original
-	return cell
-
-
-func get_path_world(start_world: Vector3, goal_world: Vector3, height_offset: float = 2.0) -> Array:
-	var start_cell_path := world_to_cell(start_world)
-	var goal_cell := world_to_cell(goal_world)
-
-	var cell_path: Array = find_path_cells(start_cell_path, goal_cell)
-	var world_path: Array = []
-
-	for c in cell_path:
-		world_path.append(cell_to_world(c, height_offset))
-
-	return world_path
-
-# ---------------------------------------------------------
-# Helpers para posiciones
-# ---------------------------------------------------------
-func get_player_start_position(height_offset: float = 2.0) -> Vector3:
-	# Punto de inicio del jugador (centro de la celda start_cell)
-	var wx: float = float(start_cell.x) * cell_size
-	var wz: float = float(start_cell.y) * cell_size
-	return Vector3(wx, height_offset, wz)
-
-func get_exit_position(height_offset: float = 2.0) -> Vector3:
-	# Punto interior justo antes del borde (exit_cell)
-	var wx: float = float(exit_cell.x) * cell_size
-	var wz: float = float(exit_cell.y) * cell_size
-	return Vector3(wx, height_offset, wz)
-
-func get_center_altar_position(height_offset: float = 0.0) -> Vector3:
-	# Posición para el altar en el centro de la plaza
-	var wx: float = float(center_cell.x) * cell_size
-	var wz: float = float(center_cell.y) * cell_size
-	return Vector3(wx, height_offset, wz)
-
-func get_exit_corridor_origin(height_offset: float = 0.0) -> Vector3:
-	# Punto justo FUERA del laberinto, alineado con la salida derecha
-	var wx: float = float(width) * cell_size
-	var wz: float = float(exit_cell.y) * cell_size
-	return Vector3(wx, height_offset, wz)
-
 func world_to_cell(world_pos: Vector3) -> Vector2i:
-	# Convertimos posición mundial a índice de celda aproximando
-	# al centro de la celda más cercana.
 	var x := int(floor(world_pos.x / cell_size + 0.5))
 	var y := int(floor(world_pos.z / cell_size + 0.5))
 	return Vector2i(x, y)
 
-
 func cell_to_world(cell: Vector2i, height_offset: float = 0.0) -> Vector3:
-	# Cada celda corresponde al centro (x * cell_size, z * cell_size)
 	var wx: float = float(cell.x) * cell_size
 	var wz: float = float(cell.y) * cell_size
 	return Vector3(wx, height_offset, wz)
 
-func _is_walkable(cell: Vector2i) -> bool:
-	if not _is_inside_grid(cell):
-		return false
-	return grid[cell.y][cell.x] == 1
+func get_player_start_position(height_offset: float = 2.0) -> Vector3:
+	return cell_to_world(start_cell, height_offset)
+
+func get_exit_position(height_offset: float = 2.0) -> Vector3:
+	return cell_to_world(exit_cell, height_offset)
+
+func get_center_altar_position(height_offset: float = 0.0) -> Vector3:
+	return cell_to_world(center_cell, height_offset)
+
+func get_exit_corridor_origin(height_offset: float = 0.0) -> Vector3:
+	var wx: float = float(width) * cell_size
+	var wz: float = float(exit_cell.y) * cell_size
+	return Vector3(wx, height_offset, wz)
 
 
-# ---------------------------------------------------------
-# Hooks públicos para futuros sistemas (enemigos, loot, etc.)
-# ---------------------------------------------------------
-func get_random_walkable_cell(
-		exclude_start: bool = true,
-		exclude_exit: bool = true,
-		exclude_center: bool = false
-	) -> Vector2i:
+func get_random_walkable_world_position(height_offset: float = 0.0, exclude_start: bool = true, exclude_exit: bool = true, exclude_center: bool = false) -> Vector3:
 	var candidates: Array = []
 	for cell in walkable_cells:
-		if exclude_start and cell == start_cell:
-			continue
-		if exclude_exit and cell == exit_cell:
-			continue
-		if exclude_center and cell == center_cell:
-			continue
+		if exclude_start and cell == start_cell: continue
+		if exclude_exit and cell == exit_cell: continue
+		if exclude_center and cell == center_cell: continue
 		candidates.append(cell)
-
-	if candidates.is_empty():
-		return start_cell  # fallback
-
+	
+	if candidates.is_empty(): 
+		# Si falla, al inicio pero alto
+		var start_pos = cell_to_world(start_cell, height_offset)
+		start_pos.y = 8.0 
+		return start_pos
+	
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
-	return candidates[rng.randi_range(0, candidates.size() - 1)]
+	var random_cell = candidates[rng.randi_range(0, candidates.size() - 1)]
+	
+	# Obtenemos el centro matemático de la celda
+	var center_pos = cell_to_world(random_cell, 0.0)
+	
+	return Vector3(center_pos.x, 8.0, center_pos.z)
 
-func get_random_walkable_world_position(
-		height_offset: float = 0.0,
-		exclude_start: bool = true,
-		exclude_exit: bool = true,
-		exclude_center: bool = false
-	) -> Vector3:
-	var cell := get_random_walkable_cell(exclude_start, exclude_exit, exclude_center)
-	return cell_to_world(cell, height_offset)
-
+# ---------------------------------------------------------
+# ANTORCHAS
+# ---------------------------------------------------------
 func _place_torches() -> void:
-	if torch_scene == null:
-		return
-
+	if wall_torch_scene == null: return
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
-
 	for cell: Vector2i in walkable_cells:
-		# Probabilidad de poner antorcha en esta celda de pasillo
-		if rng.randf() > torch_probability:
-			continue
-
+		if rng.randf() > torch_probability: continue
 		var wall_dirs: Array[Vector2i] = []
-		var dirs: Array[Vector2i] = [
-			Vector2i.LEFT,
-			Vector2i.RIGHT,
-			Vector2i.UP,
-			Vector2i.DOWN
-		]
-
-		# Buscamos paredes adyacentes a este pasillo
-		for dir: Vector2i in dirs:
+		for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
 			var neighbor: Vector2i = cell + dir
-
-			if not _is_inside_grid(neighbor):
-				continue
-
-			# OJO: grid[y][x]
-			if grid[neighbor.y][neighbor.x] == 0:
-				wall_dirs.append(dir)
-
-		if wall_dirs.is_empty():
-			continue
-
-		# Elegimos una pared al azar alrededor del pasillo
+			if not _is_inside_grid(neighbor): continue
+			if grid[neighbor.y][neighbor.x] == 0: wall_dirs.append(dir)
+		if wall_dirs.is_empty(): continue
 		var dir2d: Vector2i = wall_dirs[rng.randi_range(0, wall_dirs.size() - 1)]
 		var wall_cell: Vector2i = cell + dir2d
-
-		# Dirección de pasillo -> pared en 3D
 		var dir3d: Vector3 = Vector3(dir2d.x, 0.0, dir2d.y).normalized()
-
-		# Centro del bloque de pared (igual que en _build_maze)
 		var wall_center: Vector3 = cell_to_world(wall_cell, wall_height * 0.5)
-
-		# Punto en la cara de la pared que da al pasillo
-		var offset_distance: float = wall_thickness * 0.5 + 0.1
-		var torch_pos: Vector3 = wall_center - dir3d * offset_distance
+		var offset: float = wall_thickness * 0.5 + 0.1
+		var torch_pos: Vector3 = wall_center - dir3d * offset
 		torch_pos.y = torch_height
-
-		var torch := torch_scene.instantiate() as Node3D
+		var torch := wall_torch_scene.instantiate() as Node3D
 		add_child(torch)
 		torch.global_position = torch_pos
-
-		# Que mire hacia el interior del pasillo
-		var forward: Vector3 = -dir3d
-		torch.look_at(torch.global_position + forward, Vector3.UP)
-		torch.rotate_y(PI)#Esto es por que genera las antorchas con 180 grados y asi se corrgie y mira hacia fuera
+		torch.look_at(torch.global_position - dir3d, Vector3.UP)
+		torch.rotate_y(PI)
 
 func _spawn_arena_torches() -> void:
 	if arena_torch_scene == null: return
@@ -440,14 +281,24 @@ func _spawn_arena_torches() -> void:
 	var min_y = center_cell.y - half_h
 	var max_y = center_cell.y + half_h
 
+	var spacing: int = 2 
 	for y in range(min_y, max_y + 1):
 		for x in range(min_x, max_x + 1):
-			var is_edge = (x == min_x or x == max_x or y == min_y or y == max_y)
-			
-			if is_edge:
+			var place_torch = false
+			# 1. Borde Superior e Inferior
+			if y == min_y or y == max_y:
+				# Solo ponemos si la distancia desde la esquina izquierda es par
+				if (x - min_x) % spacing == 0:
+					place_torch = true
+			# 2. Borde Izquierdo y Derecho (excluyendo esquinas ya calculadas arriba)
+			elif x == min_x or x == max_x:
+				# Solo ponemos si la distancia desde la esquina superior es par
+				if (y - min_y) % spacing == 0:
+					place_torch = true
+			# 3. Instanciar si corresponde
+			if place_torch:
 				var cell = Vector2i(x, y)
 				var torch_pos = cell_to_world(cell, arena_torch_height_offset)
-				
 				var torch = arena_torch_scene.instantiate()
 				add_child(torch)
 				torch.global_position = torch_pos

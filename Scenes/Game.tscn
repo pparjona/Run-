@@ -3,19 +3,20 @@
 [ext_resource type="Script" uid="uid://e1wsmpwyvwo0" path="res://Scripts/Game.gd" id="1_b2bpf"]
 [ext_resource type="Script" uid="uid://cbaimku75aaqw" path="res://Scripts/Maze.gd" id="2_7lihs"]
 [ext_resource type="PackedScene" uid="uid://bb3yf22v2asee" path="res://Scenes/Maze/Altar.tscn" id="2_fgofq"]
-[ext_resource type="PackedScene" uid="uid://br0k4crwiihc6" path="res://Scenes/Maze/Wall.tscn" id="3_fgofq"]
-[ext_resource type="PackedScene" uid="uid://ccgejc2y04bcy" path="res://Scenes/Maze/Floor.tscn" id="4_2irst"]
 [ext_resource type="PackedScene" uid="uid://bs2fue8r4bw2j" path="res://Scenes/Enemys/EnemyBoss.tscn" id="4_bf53h"]
 [ext_resource type="PackedScene" uid="uid://etgi74cbo7rm" path="res://Scenes/Pistol/gun_pick_up.tscn" id="5_71axn"]
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://Scenes/Player/Proto_controller.tscn" id="5_bf53h"]
 [ext_resource type="PackedScene" uid="uid://hpktclvvq00u" path="res://Scenes/HUD.tscn" id="6_71axn"]
 [ext_resource type="PackedScene" uid="uid://b05uie7f3wlf3" path="res://Scenes/Maze/ExitCorridor.tscn" id="7_fgofq"]
+[ext_resource type="PackedScene" uid="uid://chj84etb62q7v" path="res://Scenes/Maze/WallMesh.tscn" id="9_wxwew"]
 [ext_resource type="PackedScene" uid="uid://frklwbf6lxbx" path="res://Scenes/Enemys/EnemyNormal.tscn" id="10_71axn"]
+[ext_resource type="PackedScene" uid="uid://bufvf13fseaj6" path="res://Scenes/Maze/FloorMesh.tscn" id="10_acvyw"]
 [ext_resource type="PackedScene" uid="uid://bq1avvp8yie0r" path="res://Scenes/Maze/WallTorch.tscn" id="11_3cx6b"]
 [ext_resource type="Script" uid="uid://cb65mhiyf4qix" path="res://Scripts/Enemy_manager.gd" id="11_dahhg"]
 [ext_resource type="PackedScene" uid="uid://crvoa13oq3rlh" path="res://Scenes/Maze/GroundTorch.tscn" id="12_wxwew"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3so38"]
+energy_multiplier = 0.07
 
 [sub_resource type="Sky" id="Sky_3so38"]
 sky_material = SubResource("ProceduralSkyMaterial_3so38")
@@ -26,7 +27,8 @@ background_color = Color(0.7306387, 0.4360749, 0.33801955, 1)
 sky = SubResource("Sky_3so38")
 tonemap_mode = 2
 glow_enabled = true
-volumetric_fog_density = 0.14
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.1
 volumetric_fog_albedo = Color(0.4244187, 0.42441872, 0.4244187, 1)
 volumetric_fog_emission = Color(0.31579703, 0.315797, 0.31579694, 1)
 volumetric_fog_emission_energy = 0.0
@@ -47,9 +49,9 @@ environment = SubResource("Environment_u44n3")
 
 [node name="Maze" type="Node3D" parent="."]
 script = ExtResource("2_7lihs")
-wall_scene = ExtResource("3_fgofq")
-floor_scene = ExtResource("4_2irst")
-torch_scene = ExtResource("11_3cx6b")
+wall_scene = ExtResource("9_wxwew")
+floor_scene = ExtResource("10_acvyw")
+wall_torch_scene = ExtResource("11_3cx6b")
 arena_torch_scene = ExtResource("12_wxwew")
 
 [node name="Player" parent="." instance=ExtResource("5_bf53h")]

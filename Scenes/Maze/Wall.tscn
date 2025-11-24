@@ -1,5 +1,0 @@
-[gd_scene format=3 uid="uid://br0k4crwiihc6"]
-
-[node name="Wall" type="CSGBox3D"]
-use_collision = true
-size = Vector3(2, 4, 2)
