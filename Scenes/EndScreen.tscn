@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bk0d0g4x12cm5"]
+[gd_scene load_steps=5 format=3 uid="uid://bk0d0g4x12cm5"]
 
 [ext_resource type="Script" uid="uid://0p4xbv8pdt5p" path="res://Scripts/End_Screen.gd" id="1_gcms0"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_2ohhu"]
+[ext_resource type="Texture2D" uid="uid://bwcwvn4q72v7u" path="res://Textures/Backgrounds/finalBackground1.png" id="2_jrx8a"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_jrx8a"]
 font = ExtResource("2_2ohhu")
@@ -11,22 +12,29 @@ font_size = 80
 script = ExtResource("1_gcms0")
 
 [node name="Background" type="TextureRect" parent="."]
+modulate = Color(0.6542321, 0.6542321, 0.654232, 1)
+texture_filter = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("2_jrx8a")
+expand_mode = 1
 
 [node name="Label" type="Label" parent="."]
-anchors_preset = -1
-anchor_left = 0.09
-anchor_top = 0.259
-anchor_right = 0.90900004
-anchor_bottom = 0.40100002
-offset_left = 0.31999207
-offset_top = 0.16799927
-offset_right = -0.16809082
-offset_bottom = 0.15197754
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -472.0
+offset_top = -156.0
+offset_right = 471.0
+offset_bottom = -64.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
 text = "You finish the game"
 label_settings = SubResource("LabelSettings_jrx8a")
 

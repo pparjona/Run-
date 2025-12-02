@@ -1,12 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://hpktclvvq00u"]
+[gd_scene load_steps=6 format=3 uid="uid://hpktclvvq00u"]
 
 [ext_resource type="Script" uid="uid://dipeksogynn0r" path="res://Scripts/Hud.gd" id="1_sd512"]
+[ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_jo1ms"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sd512"]
 bg_color = Color(0.4090936, 0.40909368, 0.40909347, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jo1ms"]
 bg_color = Color(0.6830772, 0.6830774, 0.6830771, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_psnte"]
+font = ExtResource("2_jo1ms")
 
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_sd512")
@@ -57,6 +61,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "--"
+label_settings = SubResource("LabelSettings_psnte")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 8
@@ -71,7 +76,7 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Crosshead" type="ColorRect" parent="."]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
