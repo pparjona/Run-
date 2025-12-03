@@ -1,8 +1,8 @@
 extends OmniLight3D
 
-@export var base_energy: float = 0.8
-@export var flicker_amount: float = 0.2
-@export var flicker_speed: float = 6.0
+@export var base_energy: float = 1.0
+@export var flicker_amount: float = 0.3
+@export var flicker_speed: float = 5.0
 
 var t: float = 0.0
 

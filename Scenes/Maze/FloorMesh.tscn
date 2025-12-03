@@ -1,6 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://bufvf13fseaj6"]
+[gd_scene load_steps=7 format=3 uid="uid://bufvf13fseaj6"]
+
+[ext_resource type="Texture2D" uid="uid://yergsd1f3ci0" path="res://Textures/MazeTextures/Floor/large_sandstone_blocks_01_diff_1k.jpg" id="1_sjjdq"]
+[ext_resource type="Texture2D" uid="uid://cqekkk60bau8v" path="res://Textures/MazeTextures/Floor/large_sandstone_blocks_01_nor_gl_1k.jpg" id="2_hte11"]
+[ext_resource type="Texture2D" uid="uid://cbjf21lflul0e" path="res://Textures/MazeTextures/Floor/large_sandstone_blocks_01_rough_1k.jpg" id="3_nt0e4"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_3rgyk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5yc7k"]
+albedo_texture = ExtResource("1_sjjdq")
+roughness_texture = ExtResource("3_nt0e4")
+normal_enabled = true
+normal_texture = ExtResource("2_hte11")
+uv1_scale = Vector3(100, 100, 100)
+uv1_triplanar = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lrfr3"]
 
@@ -8,6 +20,7 @@
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_3rgyk")
+surface_material_override/0 = SubResource("StandardMaterial3D_5yc7k")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_lrfr3")

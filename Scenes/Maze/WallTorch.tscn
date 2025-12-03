@@ -6,12 +6,18 @@
 [node name="WallTorch" instance=ExtResource("1_mh3rk")]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 
+[node name="torchholder_Mat_0" parent="Sketchfab_model/0bcd75f18f7a494aae5b71abf47cf071_fbx/RootNode/torch/torchholder" index="0"]
+cast_shadow = 0
+
+[node name="torch_2_Mat_0" parent="Sketchfab_model/0bcd75f18f7a494aae5b71abf47cf071_fbx/RootNode/torch/torch_2" index="0"]
+cast_shadow = 0
+
 [node name="TorchLight" type="OmniLight3D" parent="." index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 37.96501, 26.544386)
 light_color = Color(0.9725128, 0.47981125, 1.732707e-06, 1)
 light_bake_mode = 0
 shadow_enabled = true
-shadow_opacity = 0.1
+shadow_opacity = 0.8
 omni_range = 10.0
 omni_attenuation = 0.8
 script = ExtResource("2_dcpo4")
