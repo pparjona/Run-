@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://goqims14xemp"]
+[gd_scene load_steps=11 format=3 uid="uid://goqims14xemp"]
 
 [ext_resource type="Script" uid="uid://bpiyrghsanfmv" path="res://Scripts/MenuUi.gd" id="1_f1v4l"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_23r57"]
 [ext_resource type="FontFile" uid="uid://do26357pp65jx" path="res://Textures/Fonts/who asks satan.ttf" id="2_uc07g"]
 [ext_resource type="Texture2D" uid="uid://cj012uxtgtk7h" path="res://Textures/Backgrounds/backgroundMenu2.png" id="2_xtm07"]
+[ext_resource type="Texture2D" uid="uid://broeg4x821sqx" path="res://Textures/MenuBottonTextures/texturamenuboton.png" id="5_7rytj"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_xtm07"]
 font = ExtResource("2_uc07g")
@@ -16,6 +17,27 @@ font = ExtResource("2_uc07g")
 font_size = 70
 outline_size = 4
 outline_color = Color(8.731843e-06, 8.731842e-06, 8.731842e-06, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_oquxm"]
+texture = ExtResource("5_7rytj")
+expand_margin_left = 35.0
+expand_margin_top = 10.0
+expand_margin_right = 38.0
+expand_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_7rytj"]
+texture = ExtResource("5_7rytj")
+expand_margin_left = 35.0
+expand_margin_top = 10.0
+expand_margin_right = 38.0
+expand_margin_bottom = 10.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kabj0"]
+texture = ExtResource("5_7rytj")
+expand_margin_left = 35.0
+expand_margin_top = 10.0
+expand_margin_right = 38.0
+expand_margin_bottom = 8.0
 
 [node name="MenuUi" type="CanvasLayer"]
 script = ExtResource("1_f1v4l")
@@ -53,7 +75,7 @@ grow_vertical = 2
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/separation = 8
+theme_override_constants/separation = 27
 alignment = 1
 
 [node name="MenuLabel" type="Label" parent="MarginContainer/VBoxContainer"]
@@ -66,18 +88,21 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_23r57")
+theme_override_styles/normal = SubResource("StyleBoxTexture_oquxm")
 text = "Start"
 
 [node name="SettingButton" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_23r57")
+theme_override_styles/normal = SubResource("StyleBoxTexture_7rytj")
 text = "        SETTINGS        "
 
 [node name="ExitButton" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_fonts/font = ExtResource("2_23r57")
+theme_override_styles/normal = SubResource("StyleBoxTexture_kabj0")
 text = "EXIT"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
