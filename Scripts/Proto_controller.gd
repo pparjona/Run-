@@ -88,11 +88,11 @@ var gun_pickup_in_range = null # Guarda el arma que podemos recoger
 @onready var head: Node3D = $Head
 @onready var collider: CollisionShape3D = $Collider
 # ¡Asegúrate de que estos nodos existen en tu escena ProtoController!
-@onready var gun_holder = $Head/Camera3D/EquipedGun
+@export var gun_holder: Node3D
 @onready var pickup_detector = $PickUpDetector
-@onready var equiped_gun: Node3D = $Head/Camera3D/EquipedGun
 @onready var aim_ray: RayCast3D = $Head/Camera3D/aim_ray
-@onready var animation_player: AnimationPlayer = $Joeee/AnimationPlayer
+@onready var animation_player: AnimationPlayer = $JoeG/AnimationPlayer
+
 
 # ---------------------------------------
 # READY
@@ -263,7 +263,7 @@ func update_animations(input_dir: Vector2):
 		# IDLE (Quieto)
 		# Aquí comprobamos si tiene pistola para poner la pose de tío duro
 		if has_gun:
-			animation_player.play("Pistol_Idle", blend_time)
+			animation_player.play("Pistol_IDLE", blend_time)
 		else:
 			animation_player.play("Joe_Idle", blend_time)
 
