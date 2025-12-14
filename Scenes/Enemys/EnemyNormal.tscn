@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://frklwbf6lxbx"]
 
-[ext_resource type="Script" uid="uid://cp0rji4qxdygc" path="res://Scenes/Enemys/EnemyNormal.gd" id="1_dc3hb"]
+[ext_resource type="Script" uid="uid://cp0rji4qxdygc" path="res://Scripts/EnemyNormal.gd" id="1_dc3hb"]
 [ext_resource type="PackedScene" uid="uid://bcru5pxtsf8pw" path="res://Scenes/loot/AmmoPickup.tscn" id="2_ixcf5"]
 [ext_resource type="PackedScene" uid="uid://cqhscky45urwq" path="res://Scenes/Enemys/assetEnemy.tscn" id="3_ixcf5"]
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bq1avvp8yie0r"]
 
 [ext_resource type="PackedScene" uid="uid://ckbrop5jfnyc2" path="res://Assets/WallTorch/wallTorchBest.glb" id="1_mh3rk"]
-[ext_resource type="Script" uid="uid://b5mggslwxi30s" path="res://Scenes/Maze/TorchLight.gd" id="2_dcpo4"]
+[ext_resource type="Script" uid="uid://b5mggslwxi30s" path="res://Scripts/TorchLight.gd" id="2_dcpo4"]
 
 [node name="WallTorch" instance=ExtResource("1_mh3rk")]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)

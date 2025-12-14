@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://crvoa13oq3rlh"]
 
 [ext_resource type="PackedScene" uid="uid://dpqgut5ffjkqf" path="res://Assets/GroundTorch/groundTorch.glb" id="1_l2aym"]
-[ext_resource type="Script" uid="uid://b5mggslwxi30s" path="res://Scenes/Maze/TorchLight.gd" id="2_47upt"]
+[ext_resource type="Script" uid="uid://b5mggslwxi30s" path="res://Scripts/TorchLight.gd" id="2_47upt"]
 
 [node name="GroundTorch" instance=ExtResource("1_l2aym")]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)

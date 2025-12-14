@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bcru5pxtsf8pw"]
 
-[ext_resource type="Script" uid="uid://wycxfnh0rxlv" path="res://Scenes/loot/AmmoPickup.gd" id="1_5r0th"]
+[ext_resource type="Script" uid="uid://wycxfnh0rxlv" path="res://Scripts/AmmoPickup.gd" id="1_5r0th"]
 [ext_resource type="PackedScene" uid="uid://podksbibw5oq" path="res://Scenes/loot/Ammo.tscn" id="2_y06sl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2wcy5"]
