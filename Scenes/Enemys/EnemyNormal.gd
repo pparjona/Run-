@@ -10,11 +10,16 @@ var current_health: int = 100
 @export var ammo_drop_min: int = 5
 @export var ammo_drop_max: int = 15
 
+@export var damage: float = 1.0
+
 @onready var asset_enemy: Node3D = $AssetEnemy
 @onready var animation_player: AnimationPlayer = $AssetEnemy/AnimationPlayer
+@onready var area_3d: Area3D = $Area3D
+@onready var timer: Timer = $Timer
 
 @onready var navigation_agent_3d: NavigationAgent3D = $NavigationAgent3D
 var target: CharacterBody3D = null
+
 
 func _ready() -> void:
 	if animation_player:
@@ -54,6 +59,12 @@ func _physics_process(delta: float) -> void:
 		global_transform = current_transform.interpolate_with(target_transform, turn_speed * delta)
 	
 	move_and_slide()
+	
+	# Check if player is near enough to damage
+	for body in  area_3d.get_overlapping_bodies():
+		if body.is_in_group("Player") and timer.is_stopped():
+			body.take_damage(damage)
+			timer.start()
 
 func _target_position(target):
 	navigation_agent_3d.target_position = target.global_transform.origin
@@ -90,3 +101,7 @@ func _try_drop_ammo() -> void:
 		pickup.set_ammo_amount(amount)
 	elif "ammo_amount" in pickup:
 		pickup.ammo_amount = amount
+
+
+func _on_timer_timeout() -> void:
+	timer.stop() # Replace with function body.
