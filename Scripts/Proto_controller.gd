@@ -92,6 +92,7 @@ var gun_pickup_in_range = null # Guarda el arma que podemos recoger
 @onready var pickup_detector = $PickUpDetector
 @onready var equiped_gun: Node3D = $Head/Camera3D/EquipedGun
 @onready var aim_ray: RayCast3D = $Head/Camera3D/aim_ray
+@onready var animation_player: AnimationPlayer = $Joeee/AnimationPlayer
 
 # ---------------------------------------
 # READY
@@ -196,15 +197,18 @@ func _physics_process(delta: float) -> void:
 		if Input.is_action_just_pressed(input_jump) and is_on_floor():
 			velocity.y = jump_velocity
 
-	# Correr / andar
-	if can_sprint and Input.is_action_pressed(input_sprint):
+	# Capturamos el input (W,A,S,D)
+	var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
+	
+	# --- LÓGICA DE VELOCIDAD ---
+	if can_sprint and Input.is_action_pressed(input_sprint) and input_dir.y < 0:
+		# Solo corremos rápido si vamos hacia adelante
 		move_speed = sprint_speed
 	else:
 		move_speed = base_speed
 
-	# Movimiento horizontal normal
+	# --- APLICAR MOVIMIENTO ---
 	if can_move:
-		var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
 		var move_dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 		if move_dir:
 			velocity.x = move_dir.x * move_speed
@@ -214,10 +218,54 @@ func _physics_process(delta: float) -> void:
 			velocity.z = move_toward(velocity.z, 0, move_speed)
 	else:
 		velocity.x = 0
-		velocity.y = 0
+		velocity.z = 0 # Corregido velocity.y a velocity.z para no frenar la caída
+	
+	# --- AQUÍ LLAMAMOS A LAS ANIMACIONES ---
+	update_animations(input_dir)
 
 	move_and_slide()
 
+# ----------------------------------------------------
+# SISTEMA DE ANIMACIONES (LOCOMOTION)
+# ----------------------------------------------------
+func update_animations(input_dir: Vector2):
+	# Tiempo de mezcla para que no se vea brusco (0.2 segundos)
+	var blend_time = 0.2
+	
+	# Si estamos en el aire (saltando o cayendo), podrías poner aquí una animación de salto
+	# if not is_on_floor():
+	# 	animation_player.play("Joe_Jump", blend_time)
+	# 	return
+
+	# MOVIMIENTO: Usamos el input vector para saber qué tecla tocas
+	# input_dir.y < 0 es hacia ADELANTE (W)
+	# input_dir.y > 0 es hacia ATRÁS (S)
+	# input_dir.x < 0 es hacia IZQUIERDA (A)
+	# input_dir.x > 0 es hacia DERECHA (D)
+
+	if input_dir.y < 0:
+		# Avanzar
+		animation_player.play("Joe_Running", blend_time)
+		
+	elif input_dir.y > 0:
+		# Retroceder
+		animation_player.play("Joe_Running_Backwards", blend_time)
+		
+	elif input_dir.x < 0:
+		# Strafe Izquierda
+		animation_player.play("Joe_Strafe_Left", blend_time)
+		
+	elif input_dir.x > 0:
+		# Strafe Derecha
+		animation_player.play("Joe_Strafe_Right", blend_time)
+		
+	else:
+		# IDLE (Quieto)
+		# Aquí comprobamos si tiene pistola para poner la pose de tío duro
+		if has_gun:
+			animation_player.play("Pistol_Idle", blend_time)
+		else:
+			animation_player.play("Joe_Idle", blend_time)
 
 # ----------------------------------------------------
 # ROTACIÓN DE CÁMARA
