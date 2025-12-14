@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://hpktclvvq00u"]
+[gd_scene load_steps=8 format=3 uid="uid://hpktclvvq00u"]
 
 [ext_resource type="Script" path="res://Scripts/Hud.gd" id="1_sd512"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_jo1ms"]
 [ext_resource type="Texture2D" uid="uid://bu7wg6ftrq77l" path="res://Textures/MenuBottonTextures/Flashlight_icon.png" id="3_psnte"]
+[ext_resource type="PackedScene" uid="uid://blrngkp7i6w7r" path="res://Scenes/Minimap.tscn" id="4_s3jbq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sd512"]
 bg_color = Color(0.4090936, 0.40909368, 0.40909347, 1)
@@ -113,3 +114,9 @@ expand_mode = 4
 layout_mode = 2
 theme_override_font_sizes/font_size = 9
 text = "F - Flashlight"
+
+[node name="Minimap" parent="." instance=ExtResource("4_s3jbq")]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
