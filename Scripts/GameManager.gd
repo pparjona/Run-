@@ -6,9 +6,10 @@ var state: GameState = GameState.MENU
 
 # Rutas de escenas principales (se usarán más adelante)
 const MAIN_MENU_SCENE := "res://Scenes/UserInterface/MenuUi.tscn"
-const GAME_SCENE      := "res://Scenes/UserInterface/Game.tscn"
+const GAME_SCENE      := "res://Scenes/Game.tscn"
 const SETTINGS_SCENE  := "res://Scenes/UserInterface/Settings.tscn"
 const END_SCENE       := "res://Scenes/UserInterface/EndScreen.tscn"
+const GAMEOVER_SCENE  := "res://Scenes/UserInterface/GameoverScreen.tscn"
 
 var menu_music_stream = preload("res://Sounds/Musica/musicaMenu2.mp3")
 var game_music_stream = preload("res://Sounds/Musica/musicaAmbiente.mp3")
@@ -55,7 +56,7 @@ func goto_settings() -> void:
 
 func game_over() -> void:
 	_destroy_music()
-	_change_scene(END_SCENE, GameState.GAME_OVER)
+	_change_scene(GAMEOVER_SCENE, GameState.GAME_OVER)
 
 
 func game_won() -> void:
@@ -155,6 +156,7 @@ func _connect_player_to_hud() -> void:
 func on_player_died() -> void:
 	print("GameManager: el jugador ha muerto")
 	# Más adelante: game_over()
+	game_over()
 
 
 func on_player_escaped() -> void:
