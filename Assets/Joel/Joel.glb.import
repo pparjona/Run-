@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://byme1s61h0hnm"
-path="res://.godot/imported/Joel.glb-21586ea2ebdac0d47e371d4bacf98a95.scn"
+path="res://.godot/imported/Joel.glb-1138371b2ac50a73948af93fe50897a7.scn"
 
 [deps]
 
-source_file="res://Joel/Joel.glb"
-dest_files=["res://.godot/imported/Joel.glb-21586ea2ebdac0d47e371d4bacf98a95.scn"]
+source_file="res://Assets/Joel/Joel.glb"
+dest_files=["res://.godot/imported/Joel.glb-1138371b2ac50a73948af93fe50897a7.scn"]
 
 [params]
 

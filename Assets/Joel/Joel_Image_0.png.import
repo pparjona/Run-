@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://413i38yp64p8"
-path.s3tc="res://.godot/imported/flashlight_1.png-5e1b0d91a1d39481e272481d47f206dd.s3tc.ctex"
+uid="uid://biivrir1l4dcd"
+path.s3tc="res://.godot/imported/Joel_Image_0.png-7ce3032c0056a7c12a5ea0e4179ed394.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "377a25abff4d7857626856c7a3afa80e"
+"md5": "97263a4f9321554096d502b8b7259b60"
 }
 
 [deps]
 
-source_file="res://Assets/Flashlight/flashlight_1.png"
-dest_files=["res://.godot/imported/flashlight_1.png-5e1b0d91a1d39481e272481d47f206dd.s3tc.ctex"]
+source_file="res://Assets/Joel/Joel_Image_0.png"
+dest_files=["res://.godot/imported/Joel_Image_0.png-7ce3032c0056a7c12a5ea0e4179ed394.s3tc.ctex"]
 
 [params]
 
