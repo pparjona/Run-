@@ -10,7 +10,7 @@ var current_health: int = 100
 @export var ammo_drop_min: int = 5
 @export var ammo_drop_max: int = 15
 
-@export var damage: float = 1.0
+@export var damage: float = 10
 
 @onready var lesha_enemy: Node3D = $Lesha_enemy
 @onready var area_3d: Area3D = $Area3D

@@ -1,0 +1,44 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://bu5cq1sojfno6"
+path.s3tc="res://.godot/imported/scourger_rig_4.png-d6c2da1f65f07f7d9232a3eb20f8eadf.s3tc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "51c48803843b9e0d6ae897392d2acf2c"
+}
+
+[deps]
+
+source_file="res://Assets/Big_boss/scourger_rig_4.png"
+dest_files=["res://.godot/imported/scourger_rig_4.png-d6c2da1f65f07f7d9232a3eb20f8eadf.s3tc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
+compress/hdr_compression=1
+compress/normal_map=1
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=1
+roughness/src_normal="res://Assets/Big_boss/scourger_rig_4.png"
+process/channel_remap/red=0
+process/channel_remap/green=1
+process/channel_remap/blue=2
+process/channel_remap/alpha=3
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0
