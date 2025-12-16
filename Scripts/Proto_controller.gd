@@ -48,6 +48,17 @@ extends CharacterBody3D
 ## Name of Input Action to Reload.
 @export var input_reload : String = "reload"
 
+# Variables para apuntar con el arma
+@export_group("Aiming (ADS)")
+## Campo de visión normal (sin apuntar)
+@export var fov_normal: float = 75.0
+## Campo de visión al apuntar (Zoom)
+@export var fov_ads: float = 40.0
+## Velocidad de transición del zoom
+@export var ads_speed: float = 20.0
+
+@export_group("Arma")
+@export var gun_holder: Node3D
 
 # ----- VARIABLES -----
 var mouse_captured : bool = false
@@ -58,7 +69,7 @@ var freeflying : bool = false
 var can_shoot: bool = true
 @export var reload_time: float = 1.0         # ajusta a la duración de la animación "reload"
 var is_reloading: bool = false
-
+var default_look_speed: float = 0.002        # Variable para guardar la velocidad original del ratón
 
 
 # VIDA Y MUNICIÓN EN PANTALLA
@@ -88,16 +99,18 @@ var gun_pickup_in_range = null # Guarda el arma que podemos recoger
 @onready var head: Node3D = $Head
 @onready var collider: CollisionShape3D = $Collider
 # ¡Asegúrate de que estos nodos existen en tu escena ProtoController!
-@export var gun_holder: Node3D
+
 @onready var pickup_detector = $PickUpDetector
 @onready var aim_ray: RayCast3D = $Head/Camera3D/aim_ray
-@onready var animation_player: AnimationPlayer = $JoeG/AnimationPlayer
+@onready var animation_player: AnimationPlayer = $Joel/AnimationPlayer
+@onready var camera_3d: Camera3D = $Head/Camera3D
 
 
 # ---------------------------------------
 # READY
 # ---------------------------------------
 func _ready() -> void:
+	default_look_speed = look_speed
 	check_input_mappings()
 	look_rotation.y = rotation.y
 	look_rotation.x = head.rotation.x
@@ -222,7 +235,10 @@ func _physics_process(delta: float) -> void:
 	
 	# --- AQUÍ LLAMAMOS A LAS ANIMACIONES ---
 	update_animations(input_dir)
-
+	
+	# Para manejar el zoom
+	_handle_zoom(delta)
+	
 	move_and_slide()
 
 # ----------------------------------------------------
@@ -231,13 +247,8 @@ func _physics_process(delta: float) -> void:
 func update_animations(input_dir: Vector2):
 	# Tiempo de mezcla para que no se vea brusco (0.2 segundos)
 	var blend_time = 0.2
-	
-	# Si estamos en el aire (saltando o cayendo), podrías poner aquí una animación de salto
-	# if not is_on_floor():
-	# 	animation_player.play("Joe_Jump", blend_time)
-	# 	return
 
-	# MOVIMIENTO: Usamos el input vector para saber qué tecla tocas
+	# MOVIMIENTO: Usamos el input vector para saber qué tecla tocamos
 	# input_dir.y < 0 es hacia ADELANTE (W)
 	# input_dir.y > 0 es hacia ATRÁS (S)
 	# input_dir.x < 0 es hacia IZQUIERDA (A)
@@ -263,7 +274,7 @@ func update_animations(input_dir: Vector2):
 		# IDLE (Quieto)
 		# Aquí comprobamos si tiene pistola para poner la pose de tío duro
 		if has_gun:
-			animation_player.play("Pistol_IDLE", blend_time)
+			animation_player.play("Pistol_Idle_003", blend_time)
 		else:
 			animation_player.play("Joe_Idle", blend_time)
 
@@ -390,6 +401,7 @@ func shoot():
 	# --- DISPARO VISUAL: ANIMACIÓN + SONIDO ---
 	var anim_player: AnimationPlayer = equipped_gun.get_node_or_null("AnimationPlayer")
 	if anim_player and anim_player.has_animation("shoot"):
+		#animation_player.play("Pistol_IDLE") #El nombre está mal, no sabía como cambiarlo en blender y por no hacerlo otra vez
 		anim_player.stop()
 		anim_player.play("shoot")
 
@@ -565,3 +577,18 @@ func take_damage(amount: int) -> void:
 	if health == 0:
 		player_died.emit()
 		_on_player_died()
+		
+		
+# Función para hacer zoom con el arma
+func _handle_zoom(delta: float) -> void:
+	var target_fov = fov_normal
+	
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and has_gun:
+		target_fov = fov_ads
+		# Bajamos la sensibilidad del ratón a la mitad al apuntar
+		look_speed = default_look_speed * 0.5 
+	else:
+		# Restauramos la sensibilidad normal
+		look_speed = default_look_speed
+	
+	camera_3d.fov = lerp(camera_3d.fov, target_fov, delta * ads_speed)

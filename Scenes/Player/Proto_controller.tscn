@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bhwc16c8hxhrr" path="res://Scripts/Proto_controller.gd" id="1_ucva2"]
 [ext_resource type="PackedScene" uid="uid://crfyxtc6thhoa" path="res://Scenes/Player/FlashLight.tscn" id="2_ddi6p"]
-[ext_resource type="PackedScene" uid="uid://c2n0acmn8u5jy" path="res://Assets/Joe/JoeG.glb" id="3_7nrhq"]
+[ext_resource type="PackedScene" uid="uid://byme1s61h0hnm" path="res://Joel/Joel.glb" id="3_7nrhq"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
 albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
@@ -22,7 +22,7 @@ size = Vector3(1.9, 1.5, 1.9)
 script = ExtResource("1_ucva2")
 can_sprint = true
 input_sprint = "Sprint"
-gun_holder = NodePath("JoeG/Armature/Skeleton3D/BoneAttachment3D/Equiped_Pistol")
+gun_holder = NodePath("Joel/Armature/Skeleton3D/BoneAttachment3D2/Equiped_Pistol")
 
 [node name="Mesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
@@ -39,7 +39,7 @@ shape = SubResource("CapsuleShape3D_iof21")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
-transform = Transform3D(1, 0, 0, 0, 0.9822742, 0.18744989, 0, -0.18744989, 0.9822742, 0.31452838, 0.32625437, 1.0653847)
+transform = Transform3D(1, 0, 0, 0, 0.9848078, 0.1736482, 0, -0.1736482, 0.9848078, 0.23, 0.3, 0.978)
 
 [node name="aim_ray" type="RayCast3D" parent="Head/Camera3D"]
 target_position = Vector3(0, -0.8, -100)
@@ -53,10 +53,10 @@ transform = Transform3D(-1.127994, 0, 2.7798615, -0.397353, 2.969194, -0.1612353
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0015029907, 1.3544301, -0.5885693)
 shape = SubResource("BoxShape3D_0i1f7")
 
-[node name="JoeG" parent="." instance=ExtResource("3_7nrhq")]
+[node name="Joel" parent="." instance=ExtResource("3_7nrhq")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
-[node name="Skeleton3D" parent="JoeG/Armature" index="0"]
+[node name="Skeleton3D" parent="Joel/Armature" index="0"]
 bones/0/position = Vector3(-0.0008754283, 0.89517236, -0.0019581318)
 bones/0/rotation = Quaternion(-0.105386324, -0.23807657, 0.0013904165, 0.96551096)
 bones/1/rotation = Quaternion(0.0268219, 0.017829437, -0.0074654412, 0.99945337)
@@ -198,18 +198,18 @@ bones/166/rotation = Quaternion(-0.7071069, 3.5890675e-08, 5.5976246e-09, 0.7071
 bones/167/position = Vector3(-0.17227513, 1.253457, 0.5520731)
 bones/167/rotation = Quaternion(0.4314155, 0.36389348, 0.57603604, 0.59130764)
 
-[node name="mixamorig7_Head" parent="JoeG/Armature/Skeleton3D" index="0"]
+[node name="mixamorig7_Head" parent="Joel/Armature/Skeleton3D" index="0"]
 transform = Transform3D(0.9727217, -0.10175632, -0.2084657, 0.015114862, 0.92454875, -0.38076335, 0.23148184, 0.367226, 0.9008666, -0.029491402, 1.4061551, 0.092458434)
 
-[node name="BoneAttachment3D" type="BoneAttachment3D" parent="JoeG/Armature/Skeleton3D" index="10"]
-transform = Transform3D(0.15904047, -0.1303224, 0.9786329, 0.9731008, 0.18804008, -0.13310038, -0.1666762, 0.97347677, 0.15672301, -0.21007377, 1.2856917, 0.65899444)
-bone_name = "mixamorig7_RightHandIndex1"
-bone_idx = 54
+[node name="BoneAttachment3D2" type="BoneAttachment3D" parent="Joel/Armature/Skeleton3D" index="10"]
+transform = Transform3D(0.07152778, -0.36725068, 0.92736775, 0.99520767, -0.03587313, -0.090966344, 0.06667508, 0.92942995, 0.36292493, -0.17227574, 1.2534586, 0.552073)
+bone_name = "mixamorig7_RightHand"
+bone_idx = 49
 
-[node name="Equiped_Pistol" type="Node3D" parent="JoeG/Armature/Skeleton3D/BoneAttachment3D"]
-transform = Transform3D(-1.3113417e-08, 0.28977776, 0.07764573, 0, 0.07764573, -0.28977776, -0.3, -1.2666589e-08, -3.3940026e-09, 0, 0.07, 0.03)
+[node name="Equiped_Pistol" type="Node3D" parent="Joel/Armature/Skeleton3D/BoneAttachment3D2"]
+transform = Transform3D(-1.268927e-08, 0.29999998, -1.21071935e-08, 1.8626451e-09, -1.3038516e-08, -0.29999998, -0.3, -1.3562385e-08, 0, 0.002, 0.17, 0.023)
 
 [connection signal="area_entered" from="PickUpDetector" to="." method="_on_pick_up_detector_area_entered"]
 [connection signal="area_exited" from="PickUpDetector" to="." method="_on_pick_up_detector_area_exited"]
 
-[editable path="JoeG"]
+[editable path="Joel"]

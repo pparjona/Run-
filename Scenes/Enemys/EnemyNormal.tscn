@@ -2,13 +2,14 @@
 
 [ext_resource type="Script" uid="uid://cp0rji4qxdygc" path="res://Scripts/EnemyNormal.gd" id="1_dc3hb"]
 [ext_resource type="PackedScene" uid="uid://bcru5pxtsf8pw" path="res://Scenes/loot/AmmoPickup.tscn" id="2_ixcf5"]
-[ext_resource type="PackedScene" uid="uid://cqhscky45urwq" path="res://Scenes/Enemys/assetEnemy.tscn" id="3_ixcf5"]
+[ext_resource type="PackedScene" uid="uid://dr1jtktcrcxls" path="res://Assets/Enemy/enemyNormal.glb" id="3_ixcf5"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ixcf5"]
-radius = 0.24609375
-height = 1.7817383
+radius = 0.4194336
+height = 2.69812
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8hn2j"]
+height = 2.7973633
 
 [node name="EnemyNormal" type="CharacterBody3D" groups=["Enemy"]]
 script = ExtResource("1_dc3hb")
@@ -16,21 +17,95 @@ ammo_drop_scene = ExtResource("2_ixcf5")
 damage = 15.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.895381, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2802076, 0)
 shape = SubResource("CapsuleShape3D_ixcf5")
 
 [node name="Area3D" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5342063, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36695004, 0)
 shape = SubResource("CapsuleShape3D_8hn2j")
-
-[node name="AssetEnemy" parent="." instance=ExtResource("3_ixcf5")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 3.0
 
+[node name="Lesha_enemy" parent="." instance=ExtResource("3_ixcf5")]
+transform = Transform3D(-0.11, 0, -9.616506e-09, 0, 0.11, 0, 9.616506e-09, 0, -0.11, 0, 0, 0)
+
+[node name="Skeleton3D" parent="Lesha_enemy/Sketchfab_model/root/GLTF_SceneRootNode/Lesha - Skelet - armature_64/GLTF_created_0" index="0"]
+bones/1/position = Vector3(-5.3418355e-16, 10.746905, -1.6737118)
+bones/1/rotation = Quaternion(-0.008537244, 4.1210037e-06, -9.456887e-06, 0.9999636)
+bones/2/rotation = Quaternion(-0.13499022, -1.8985155e-13, 4.723667e-13, 0.99084693)
+bones/3/rotation = Quaternion(0.06968066, -1.18919786e-07, -8.306337e-09, 0.99756944)
+bones/4/rotation = Quaternion(0.27300975, 2.2936108e-07, 6.957614e-13, 0.9620113)
+bones/5/rotation = Quaternion(0.3814847, 1.1455771e-08, -4.6745736e-09, 0.9243752)
+bones/6/rotation = Quaternion(0.1841239, -3.784787e-08, -3.1631767e-08, 0.9829031)
+bones/7/rotation = Quaternion(-0.6226533, -2.9352117e-08, -2.0330893e-07, 0.7824979)
+bones/8/rotation = Quaternion(0.9469712, 1.5321754e-07, 6.7732645e-07, 0.3213186)
+bones/9/position = Vector3(0.75064635, 1.441977, 1.15444)
+bones/9/rotation = Quaternion(-0.04370356, -0.02167097, -0.56293815, 0.8250582)
+bones/10/rotation = Quaternion(0.26517966, 0.028948547, -0.7148141, 0.6464383)
+bones/11/rotation = Quaternion(0.057989135, 0.21227375, -0.076752245, 0.97246397)
+bones/12/position = Vector3(-0.08789511, 4.2926064, 0.07604182)
+bones/12/rotation = Quaternion(-0.08199264, -0.03125355, -0.18760252, 0.9783179)
+bones/13/rotation = Quaternion(-0.10635529, -0.027337374, -0.25446737, 0.9608265)
+bones/14/rotation = Quaternion(-0.07309686, -0.024025643, -0.18395798, 0.97991794)
+bones/15/position = Vector3(0.008245508, 4.3051896, 0.4188792)
+bones/15/rotation = Quaternion(-0.019652674, -0.011542093, -0.09375451, 0.99533445)
+bones/16/rotation = Quaternion(-0.06429308, -0.018254744, -0.16358742, 0.9842624)
+bones/17/rotation = Quaternion(-0.04938313, -0.008079351, -0.07972408, 0.9955602)
+bones/18/position = Vector3(-0.15965186, 4.2578635, -0.17483886)
+bones/18/rotation = Quaternion(-0.13263287, -0.01729466, -0.1987631, 0.97087723)
+bones/19/rotation = Quaternion(-0.09883051, -0.010287151, -0.28540453, 0.95324236)
+bones/20/rotation = Quaternion(-0.066347644, -0.03050003, -0.20815624, 0.975366)
+bones/21/position = Vector3(-0.067456394, 4.195755, -0.41112024)
+bones/21/rotation = Quaternion(-0.23356645, -0.011744761, -0.25764263, 0.93751216)
+bones/22/rotation = Quaternion(-0.06540351, 0.03083043, -0.3683575, 0.9268682)
+bones/23/rotation = Quaternion(-0.048350304, -0.02462013, -0.3502682, 0.93507665)
+bones/24/position = Vector3(0.28417262, 4.207995, 0.46349347)
+bones/24/rotation = Quaternion(-0.06533043, -0.040119097, -0.10155076, 0.99187195)
+bones/25/rotation = Quaternion(-0.33588156, -0.13102917, -0.026271941, 0.93237585)
+bones/26/rotation = Quaternion(-0.3104155, -0.12020008, 0.03476265, 0.94232994)
+bones/27/position = Vector3(-0.7506468, 1.4419761, 1.1544392)
+bones/27/rotation = Quaternion(-0.3280399, -0.38601846, 0.59765095, 0.6214442)
+bones/28/rotation = Quaternion(-0.12578401, 0.29921564, 0.69304365, 0.64369166)
+bones/29/rotation = Quaternion(-0.10474349, 0.73571754, -0.099707015, 0.66166985)
+bones/30/position = Vector3(0.09851881, 4.123432, -0.043612055)
+bones/30/rotation = Quaternion(-0.53222764, -0.013326924, -0.11923889, 0.83805627)
+bones/31/rotation = Quaternion(-0.19182697, -0.0679774, 0.85189795, 0.48254675)
+bones/33/position = Vector3(0.040465288, 4.44867, 0.089760005)
+bones/33/rotation = Quaternion(-0.50833964, -0.014064782, -0.114665136, 0.8533727)
+bones/34/rotation = Quaternion(-0.18819122, 0.12870347, 0.6382168, 0.7353223)
+bones/36/position = Vector3(0.13670877, 3.8740373, -0.11872454)
+bones/36/rotation = Quaternion(-0.564757, -0.014609781, -0.1293003, 0.8149341)
+bones/39/position = Vector3(0.01109553, 3.6559663, -0.18839468)
+bones/39/rotation = Quaternion(-0.6285026, -0.028297145, -0.16341417, 0.7599208)
+bones/42/position = Vector3(-0.2446368, 4.4967465, 0.15283394)
+bones/42/rotation = Quaternion(-0.28295878, 0.0017104407, 0.110212214, 0.9527773)
+bones/43/rotation = Quaternion(-0.2408596, 0.10927541, 0.10444436, 0.9587163)
+bones/45/position = Vector3(-0.01675839, 3.4178894, -0.5480377)
+bones/45/rotation = Quaternion(-0.53222746, -0.013326961, -0.11923898, 0.8380563)
+bones/46/position = Vector3(1.9190253, -0.031619836, -0.43374446)
+bones/46/rotation = Quaternion(0.83475745, -0.13199727, -0.47096175, 0.25288677)
+bones/47/rotation = Quaternion(0.44134125, -0.00025158748, -0.54824275, 0.7103857)
+bones/48/rotation = Quaternion(-0.4716458, -0.07266339, 0.55588603, 0.6806328)
+bones/49/rotation = Quaternion(-0.08279322, -0.051016733, 0.24052343, 0.96575934)
+bones/50/rotation = Quaternion(0.79582626, 0.22206855, 0.4594351, 0.32598394)
+bones/51/rotation = Quaternion(0.30535382, 0.010488444, 0.50972277, 0.8042585)
+bones/52/rotation = Quaternion(-0.50093293, 0.083390154, -0.6096075, 0.6086798)
+bones/53/rotation = Quaternion(0.05144423, 0.01760361, -0.034376685, 0.99792886)
+bones/54/position = Vector3(1.1514153, 1.9221947, -4.2802973)
+bones/55/position = Vector3(-1.1514151, 0.564559, -0.6515653)
+
+[node name="Bone_006_2" parent="Lesha_enemy/Sketchfab_model/root/GLTF_SceneRootNode/Lesha - Skelet - armature_64/GLTF_created_0/Skeleton3D" index="0"]
+transform = Transform3D(1, 2.0663992e-05, 4.367004e-06, -1.9269171e-05, 0.9772874, -0.2119208, -8.646944e-06, 0.21192057, 0.97728705, 0.00018348133, 19.696348, -0.04744327)
+
+[node name="Bone_015_R_001_42" parent="Lesha_enemy/Sketchfab_model/root/GLTF_SceneRootNode/Lesha - Skelet - armature_64/GLTF_created_0/Skeleton3D" index="1"]
+transform = Transform3D(0.96576, 0.06757073, 0.2504844, 0.229767, -0.6711259, -0.70483947, 0.120480075, 0.7382584, -0.66367185, -2.6251423, 11.134012, -4.795406)
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+
+[editable path="Lesha_enemy"]
