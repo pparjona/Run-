@@ -46,6 +46,7 @@ shape = SubResource("CapsuleShape3D_wovta")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
 [node name="Timer" type="Timer" parent="."]
+one_shot = true
 
 [node name="Boss" parent="." instance=ExtResource("3_bapqv")]
 transform = Transform3D(-0.08, 0, -6.993822e-09, 0, 0.08, 0, 6.993822e-09, 0, -0.08, 0, 0, 0)

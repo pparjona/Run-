@@ -2,20 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lpischcgi47r"
-path.s3tc="res://.godot/imported/Joel_Image_1.png-1bb60249f3dbb0d0155b6469012fdcc6.s3tc.ctex"
+uid="uid://wuxwrhswwxyi"
+path.s3tc="res://.godot/imported/Joel_Ch33_1002_Diffuse.png-ae8b2727099dd6990d8df5646328ae7b.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
 }
 generator_parameters={
-"md5": "8a80811b9855854c8ced2679caa2e6eb"
+"md5": "4aeb71dc8bd599ee32c01135020cb376"
 }
 
 [deps]
 
-source_file="res://Joel/Joel_Image_1.png"
-dest_files=["res://.godot/imported/Joel_Image_1.png-1bb60249f3dbb0d0155b6469012fdcc6.s3tc.ctex"]
+source_file="res://Assets/Joel/Joel_Ch33_1002_Diffuse.png"
+dest_files=["res://.godot/imported/Joel_Ch33_1002_Diffuse.png-ae8b2727099dd6990d8df5646328ae7b.s3tc.ctex"]
 
 [params]
 

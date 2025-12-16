@@ -30,7 +30,7 @@ shape = SubResource("CapsuleShape3D_8hn2j")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 3.0
+one_shot = true
 
 [node name="Lesha_enemy" parent="." instance=ExtResource("3_ixcf5")]
 transform = Transform3D(-0.11, 0, -9.616506e-09, 0, 0.11, 0, 9.616506e-09, 0, -0.11, 0, 0, 0)
