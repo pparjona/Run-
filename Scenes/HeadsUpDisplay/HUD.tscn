@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/Hud.gd" id="1_sd512"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_jo1ms"]
 [ext_resource type="Texture2D" uid="uid://bu7wg6ftrq77l" path="res://Textures/MenuBottonTextures/Flashlight_icon.png" id="3_psnte"]
-[ext_resource type="PackedScene" uid="uid://blrngkp7i6w7r" path="res://HeadsUpDisplay/Minimap.tscn" id="4_s3jbq"]
+[ext_resource type="PackedScene" uid="uid://blrngkp7i6w7r" path="res://Scenes/HeadsUpDisplay/Minimap.tscn" id="4_s3jbq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sd512"]
 bg_color = Color(0.4090936, 0.40909368, 0.40909347, 1)

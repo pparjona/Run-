@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bs2fue8r4bw2j" path="res://Scenes/Enemys/EnemyBoss.tscn" id="4_bf53h"]
 [ext_resource type="PackedScene" uid="uid://etgi74cbo7rm" path="res://Scenes/Pistol/gun_pick_up.tscn" id="5_71axn"]
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://Scenes/Player/Proto_controller.tscn" id="5_bf53h"]
-[ext_resource type="PackedScene" uid="uid://hpktclvvq00u" path="res://HeadsUpDisplay/HUD.tscn" id="6_71axn"]
+[ext_resource type="PackedScene" uid="uid://hpktclvvq00u" path="res://Scenes/HeadsUpDisplay/HUD.tscn" id="6_71axn"]
 [ext_resource type="PackedScene" uid="uid://b05uie7f3wlf3" path="res://Scenes/Maze/ExitCorridor.tscn" id="7_fgofq"]
 [ext_resource type="PackedScene" uid="uid://chj84etb62q7v" path="res://Scenes/Maze/WallMesh.tscn" id="9_wxwew"]
 [ext_resource type="PackedScene" uid="uid://frklwbf6lxbx" path="res://Scenes/Enemys/EnemyNormal.tscn" id="10_71axn"]

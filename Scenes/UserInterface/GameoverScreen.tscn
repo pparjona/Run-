@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cn8u2pqgf1erq"]
 
-[ext_resource type="Script" uid="uid://cy1cq733gyu2s" path="res://Scenes/UserInterface/gameover_screen.gd" id="1_fvuy1"]
+[ext_resource type="Script" uid="uid://cy1cq733gyu2s" path="res://Scripts/gameover_screen.gd" id="1_fvuy1"]
 [ext_resource type="Texture2D" uid="uid://bwcwvn4q72v7u" path="res://Textures/Backgrounds/finalBackground1.png" id="1_m74t5"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_fvuy1"]
 
