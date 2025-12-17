@@ -155,8 +155,8 @@ func _calculate_volume_db(stream: AudioStream) -> float:
 	var base_db = linear_to_db(master_volume)
 	if stream == game_music_stream:
 		return (base_db - 8.0)
-	
-	# Si es cualquier otra (menú), usamos el volumen master tal cual
+	elif stream == menu_music_stream:
+		return (base_db - 15.0) 
 	return base_db
 # -------------------------
 # REGISTRO DE PLAYER Y HUD
