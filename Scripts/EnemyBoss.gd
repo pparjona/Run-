@@ -12,7 +12,6 @@ extends CharacterBody3D
 @export var ammo_per_box_max: int = 15    # Balas máximas por caja
 
 @onready var boss: Node3D = $Boss
-@onready var area_3d: Area3D = $Area3D
 @onready var timer: Timer = $Timer
 @onready var animation_player: AnimationPlayer = $Boss/AnimationPlayer
 @onready var navigation_agent_3d: NavigationAgent3D = $NavigationAgent3D
