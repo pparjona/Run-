@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://bk0d0g4x12cm5"]
+[gd_scene load_steps=9 format=3 uid="uid://bk0d0g4x12cm5"]
 
 [ext_resource type="Script" uid="uid://0p4xbv8pdt5p" path="res://Scripts/WinScreen.gd" id="1_7kv7j"]
 [ext_resource type="Texture2D" uid="uid://bwcwvn4q72v7u" path="res://Textures/Backgrounds/finalBackground1.png" id="2_yu53u"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="3_mv0on"]
 [ext_resource type="Texture2D" uid="uid://broeg4x821sqx" path="res://Textures/MenuBottonTextures/texturamenuboton.png" id="4_o5djb"]
+[ext_resource type="AudioStream" uid="uid://cuhxtmub6eenq" path="res://Sounds/Musica/WinSong.mp3" id="4_yu53u"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_jrx8a"]
 font = ExtResource("3_mv0on")
@@ -54,6 +55,9 @@ text = "You finish the game"
 label_settings = SubResource("LabelSettings_jrx8a")
 
 [node name="FinishMusic" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_yu53u")
+volume_db = -10.0
+parameters/looping = true
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = -1

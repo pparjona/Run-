@@ -10,12 +10,14 @@ const GAME_SCENE      := "res://Scenes/Game.tscn"
 const SETTINGS_SCENE  := "res://Scenes/UserInterface/Settings.tscn"
 const END_SCENE       := "res://Scenes/UserInterface/WinScreen.tscn"
 const GAMEOVER_SCENE  := "res://Scenes/UserInterface/GameoverScreen.tscn"
+const PAUSE_MENU_SCENE := "res://Scenes/UserInterface/PauseMenu.tscn"
 
 var menu_music_stream = preload("res://Sounds/Musica/musicaMenu2.mp3")
 var game_music_stream = preload("res://Sounds/Musica/musicaAmbiente.mp3")
 var music_player: AudioStreamPlayer
 
-# Ejemplo de datos globales que pueden interesar
+var pause_menu_instance: CanvasLayer = null
+
 var difficulty: int = 1
 var master_volume: float = 1.0
 
@@ -26,8 +28,17 @@ var player: Node = null
 var hud: CanvasLayer = null
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if state == GameState.MENU:
 		_play_music(menu_music_stream)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"): # Asegúrate de tener la acción "pause" en el Mapa de Entradas (Project Settings)
+		if state == GameState.PLAYING:
+			pause_game()
+		elif state == GameState.PAUSED:
+			resume_game()
 
 # -------------------------
 # CAMBIO DE ESCENAS
@@ -65,19 +76,45 @@ func game_won() -> void:
 
 
 func pause_game() -> void:
-	if state == GameState.PLAYING:
-		get_tree().paused = true
-		var old := state
-		state = GameState.PAUSED
-		state_changed.emit(old, state)
-
+	if state != GameState.PLAYING:
+		return
+		
+	var old_state = state
+	state = GameState.PAUSED
+	
+	# 1. Pausar el árbol de escenas
+	get_tree().paused = true
+	
+	# 2. Instanciar el menú de pausa
+	if pause_menu_instance == null:
+		var scene = load(PAUSE_MENU_SCENE)
+		pause_menu_instance = scene.instantiate()
+		get_tree().current_scene.add_child(pause_menu_instance)
+	
+	# 3. Liberar el ratón para poder hacer clic
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	
+	state_changed.emit(old_state, state)
 
 func resume_game() -> void:
-	if state == GameState.PAUSED:
-		get_tree().paused = false
-		var old := state
-		state = GameState.PLAYING
-		state_changed.emit(old, state)
+	if state != GameState.PAUSED:
+		return
+		
+	var old_state = state
+	state = GameState.PLAYING
+	
+	# 1. Quitar el menú de pausa
+	if pause_menu_instance != null:
+		pause_menu_instance.queue_free()
+		pause_menu_instance = null
+	
+	# 2. Reanudar el árbol
+	get_tree().paused = false
+	
+	# 3. Capturar el ratón de nuevo para jugar
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	
+	state_changed.emit(old_state, state)
 
 
 # -------------------------
