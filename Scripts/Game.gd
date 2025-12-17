@@ -5,11 +5,13 @@ extends Node3D
 @export var normal_enemy_scene: PackedScene        # Enemigo NORMAL para oleadas
 @export var exit_corridor_scene: PackedScene
 @export var gun_pickup_scene: PackedScene          # Pistola que aparece sobre el altar
+@export var pause_menu_scene: PackedScene
 
 @onready var maze: Maze = $Maze
 @onready var player: Node3D = $Player
 @onready var enemy_manager: Node = $EnemyManager
 
+var pause_menu: CanvasLayer = null
 var _arena_event_triggered: bool = false
 
 func _ready() -> void:
@@ -65,6 +67,20 @@ func _ready() -> void:
 	# 5) Instanciar el BOSS inicial en la esquina opuesta (celda de salida interna)
 	_spawn_boss_at_opposite_corner()
 
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"):
+		if pause_menu == null:
+			pause_menu = pause_menu_scene.instantiate()
+			get_tree().current_scene.add_child(pause_menu)
+			pause_menu.visible = true
+			get_tree().paused = true
+		else:
+			pause_menu.queue_free()
+			pause_menu = null
+			get_tree().paused = false
+
+		get_viewport().set_input_as_handled()
 
 func _spawn_boss_at_opposite_corner() -> void:
 	if boss_scene == null:

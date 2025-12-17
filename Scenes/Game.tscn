@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://ba4m0xgo5l8jw"]
+[gd_scene load_steps=19 format=3 uid="uid://ba4m0xgo5l8jw"]
 
 [ext_resource type="Script" uid="uid://e1wsmpwyvwo0" path="res://Scripts/Game.gd" id="1_b2bpf"]
 [ext_resource type="Script" uid="uid://cbaimku75aaqw" path="res://Scripts/Maze.gd" id="2_7lihs"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://bq1avvp8yie0r" path="res://Scenes/Maze/WallTorch.tscn" id="11_3cx6b"]
 [ext_resource type="Script" uid="uid://cb65mhiyf4qix" path="res://Scripts/Enemy_manager.gd" id="11_dahhg"]
 [ext_resource type="PackedScene" uid="uid://crvoa13oq3rlh" path="res://Scenes/Maze/GroundTorch.tscn" id="12_wxwew"]
+[ext_resource type="PackedScene" uid="uid://d3ssnd2cyqssl" path="res://Scenes/UserInterface/pause_menu.tscn" id="15_acvyw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3so38"]
 
@@ -39,6 +40,7 @@ boss_scene = ExtResource("4_bf53h")
 normal_enemy_scene = ExtResource("10_71axn")
 exit_corridor_scene = ExtResource("7_fgofq")
 gun_pickup_scene = ExtResource("5_71axn")
+pause_menu_scene = ExtResource("15_acvyw")
 
 [node name="Hud" parent="." instance=ExtResource("6_71axn")]
 

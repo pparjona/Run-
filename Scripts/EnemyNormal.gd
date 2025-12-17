@@ -124,7 +124,7 @@ func perform_attack(target_body):
 		var distancia = global_position.distance_to(target_body.global_position)
 		
 		# Solo hacemos daño si sigue estando cerca (ajusta el 2.5 si es necesario)
-		if distancia <= 1.5:
+		if distancia <= 2.5:
 			# Check de seguridad: si nos pegaron durante la espera, cancelamos
 			if is_hurting:
 				is_attacking = false 
