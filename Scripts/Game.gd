@@ -84,15 +84,24 @@ func _spawn_boss_at_opposite_corner() -> void:
 
 
 func _on_player_entered_plaza() -> void:
-	# Si ya se activó, no hacemos nada
 	if _arena_event_triggered:
 		return
-	
+
 	_arena_event_triggered = true
-	await get_tree().create_timer(1.0).timeout
+
+	#protección contra get_tree() null / nodo fuera del árbol
+	if not is_inside_tree():
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+
+	await tree.create_timer(1.0).timeout
+
+	if not is_inside_tree():
+		return
+
 	print("Game: ¡Encendiendo Arena!")
-	
-	# ACTIVAR: Muestra fuego y luces con sus valores por defecto
 	_set_arena_torches_active(true)
 
 	if enemy_manager and enemy_manager.has_method("start_waves"):
@@ -100,7 +109,18 @@ func _on_player_entered_plaza() -> void:
 
 
 func _on_all_waves_cleared() -> void:
-	await get_tree().create_timer(1.0).timeout
+	#protección contra get_tree() null / nodo fuera del árbol
+	if not is_inside_tree():
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+
+	await tree.create_timer(1.0).timeout
+
+	if not is_inside_tree():
+		return
+
 	print("Game: Apagando Fuego y Luces...")
 	_set_arena_torches_active(false)
 
