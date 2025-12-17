@@ -1,40 +1,40 @@
-[gd_scene load_steps=8 format=3 uid="uid://cn8u2pqgf1erq"]
+[gd_scene load_steps=8 format=3 uid="uid://bk0d0g4x12cm5"]
 
-[ext_resource type="Script" uid="uid://cy1cq733gyu2s" path="res://Scripts/GameOverScreen.gd" id="1_fvuy1"]
-[ext_resource type="Texture2D" uid="uid://bwcwvn4q72v7u" path="res://Textures/Backgrounds/finalBackground1.png" id="1_m74t5"]
-[ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_fvuy1"]
-[ext_resource type="Texture2D" uid="uid://broeg4x821sqx" path="res://Textures/MenuBottonTextures/texturamenuboton.png" id="4_pxdo6"]
+[ext_resource type="Script" uid="uid://0p4xbv8pdt5p" path="res://Scripts/WinScreen.gd" id="1_7kv7j"]
+[ext_resource type="Texture2D" uid="uid://bwcwvn4q72v7u" path="res://Textures/Backgrounds/finalBackground1.png" id="2_yu53u"]
+[ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="3_mv0on"]
+[ext_resource type="Texture2D" uid="uid://broeg4x821sqx" path="res://Textures/MenuBottonTextures/texturamenuboton.png" id="4_o5djb"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_pxdo6"]
-font = ExtResource("2_fvuy1")
+[sub_resource type="LabelSettings" id="LabelSettings_jrx8a"]
+font = ExtResource("3_mv0on")
 font_size = 80
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2alsc"]
-texture = ExtResource("4_pxdo6")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vst4l"]
+texture = ExtResource("4_o5djb")
 expand_margin_left = 35.0
 expand_margin_top = 10.0
 expand_margin_right = 38.0
 expand_margin_bottom = 10.0
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dootr"]
-texture = ExtResource("4_pxdo6")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_eedhe"]
+texture = ExtResource("4_o5djb")
 expand_margin_left = 35.0
 expand_margin_top = 10.0
 expand_margin_right = 38.0
 expand_margin_bottom = 10.0
 
-[node name="CanvasLayer" type="CanvasLayer"]
-script = ExtResource("1_fvuy1")
+[node name="WinScreen" type="CanvasLayer"]
+script = ExtResource("1_7kv7j")
 
 [node name="Background" type="TextureRect" parent="."]
-modulate = Color(0.654902, 0.654902, 0.654902, 1)
+modulate = Color(0.6542321, 0.6542321, 0.654232, 1)
 texture_filter = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_m74t5")
+texture = ExtResource("2_yu53u")
 expand_mode = 1
 
 [node name="Label" type="Label" parent="."]
@@ -43,17 +43,17 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -242.0
+offset_left = -472.0
 offset_top = -156.0
-offset_right = 242.0
+offset_right = 471.0
 offset_bottom = -64.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
-text = "Game over"
-label_settings = SubResource("LabelSettings_pxdo6")
+text = "You finish the game"
+label_settings = SubResource("LabelSettings_jrx8a")
 
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+[node name="FinishMusic" type="AudioStreamPlayer2D" parent="."]
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = -1
@@ -61,9 +61,9 @@ anchor_left = 0.41000003
 anchor_top = 0.44900003
 anchor_right = 0.59000003
 anchor_bottom = 0.55600005
-offset_left = 31.679962
+offset_left = -0.32003784
 offset_top = 101.04797
-offset_right = 30.319946
+offset_right = -1.6800537
 offset_bottom = 96.711975
 grow_horizontal = 2
 grow_vertical = 2
@@ -80,15 +80,15 @@ alignment = 1
 [node name="MenuButton" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_fonts/font = ExtResource("2_fvuy1")
-theme_override_styles/normal = SubResource("StyleBoxTexture_2alsc")
+theme_override_fonts/font = ExtResource("3_mv0on")
+theme_override_styles/normal = SubResource("StyleBoxTexture_vst4l")
 text = "          MENU          "
 
 [node name="ExitButton" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_fonts/font = ExtResource("2_fvuy1")
-theme_override_styles/normal = SubResource("StyleBoxTexture_dootr")
+theme_override_fonts/font = ExtResource("3_mv0on")
+theme_override_styles/normal = SubResource("StyleBoxTexture_eedhe")
 text = "EXIT"
 
 [connection signal="pressed" from="MarginContainer/VBoxContainer/MenuButton" to="." method="_on_menu_button_pressed"]
