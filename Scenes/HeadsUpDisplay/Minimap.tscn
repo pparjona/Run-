@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://blrngkp7i6w7r"]
 
-[ext_resource type="Script" path="res://Scripts/minimap.gd" id="1_hgc08"]
+[ext_resource type="Script" uid="uid://blww5pio0glnq" path="res://Scripts/minimap.gd" id="1_hgc08"]
 
 [sub_resource type="Environment" id="Environment_hgc08"]
 ambient_light_source = 2
-ambient_light_color = Color(0.21950102, 0.21950102, 0.21950102, 1)
+ambient_light_color = Color(0.14044744, 0.14044747, 0.14044738, 1)
 
 [node name="Minimap" type="Control"]
 layout_mode = 3
