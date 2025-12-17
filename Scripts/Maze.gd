@@ -67,7 +67,7 @@ func _build_maze_with_navigation() -> void:
 	nav_mesh.agent_height = 2.0
 	nav_mesh.agent_max_climb = 0.5    # Pequeña ayuda para desniveles
 	
-	nav_mesh.cell_height = 0.02
+	nav_mesh.cell_height = 0.25 #esto estaba en 0,02
 	# IMPORTANTE: "PARSED_GEOMETRY_STATIC_COLLIDERS" es la mejor opción 
 	# cuando usas StaticBody3D + MeshInstance3D (tus paredes y suelo nuevos)
 	nav_mesh.geometry_parsed_geometry_type = NavigationMesh.PARSED_GEOMETRY_STATIC_COLLIDERS

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dovwfyq7qbh5l" path="res://Scripts/EnemyBoss.gd" id="1_x0a3p"]
 [ext_resource type="PackedScene" uid="uid://bcru5pxtsf8pw" path="res://Scenes/loot/AmmoPickup.tscn" id="2_bapqv"]
 [ext_resource type="PackedScene" uid="uid://cs1wnyv81o1at" path="res://Assets/Big_boss/scourger_rig.glb" id="3_bapqv"]
-[ext_resource type="Script" uid="uid://dd7ls72c8n3wq" path="res://Scripts/hitbox_head.gd" id="4_d5ak1"]
+[ext_resource type="Script" path="res://Scripts/hitbox_head.gd" id="4_d5ak1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7fd37"]
 albedo_color = Color(1, 0, 0, 1)
