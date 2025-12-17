@@ -1,26 +1,23 @@
 extends CharacterBody3D
 
-@export var move_speed: float = 1.8
+@export var move_speed: float = 2.05
 @export var turn_speed: float = 8.0
 @export var max_health: int = 100
-var current_health: int = 100
-
 @export var ammo_drop_scene: PackedScene
 @export var ammo_drop_chance: float = 0.4
 @export var ammo_drop_min: int = 5
 @export var ammo_drop_max: int = 15
-
 @export var damage: float = 10
 
 @onready var lesha_enemy: Node3D = $Lesha_enemy
-@onready var area_3d: Area3D = $Area3D
 @onready var timer: Timer = $Timer
 # Asegúrate de que la ruta al AnimationPlayer sea correcta
 @onready var animation_player: AnimationPlayer = $Lesha_enemy/AnimationPlayer 
-
 @onready var navigation_agent_3d: NavigationAgent3D = $NavigationAgent3D
-var target: CharacterBody3D = null
+@onready var area_3d: Area3D = $Area3D
 
+var current_health: int = 200
+var target: CharacterBody3D = null
 var is_attacking: bool = false
 var is_hurting: bool = false
 
@@ -29,11 +26,13 @@ func _ready() -> void:
 	# Iniciamos con Idle
 	if animation_player:
 		animation_player.play("Lesha_idle", 0.2, 0.6)
-	else:
-		print("ERROR: No encuentro el AnimationPlayer")
+
+
 
 func set_target_and_maze(p_target: Node3D, _p_maze: Node) -> void:
 	target = p_target
+
+
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
@@ -81,6 +80,7 @@ func _physics_process(delta: float) -> void:
 	check_attack_range()
 
 
+
 # --- FUNCIÓN PARA ANIMACIONES DE MOVIMIENTO ---
 func _handle_move_animation(h_velocity: Vector3):
 	# Solo cambiamos la animación si NO estamos haciendo otra cosa importante
@@ -88,9 +88,10 @@ func _handle_move_animation(h_velocity: Vector3):
 		return
 		
 	if h_velocity.length() > 0.5: # Si se mueve
-		animation_player.play("Lesha_walk", 0.2)
+		animation_player.play("Lesha_walk", 0.2, 1.5)
 	else: # Si está casi quieto
 		animation_player.play("Lesha_idle", 0.2, 0.6)
+
 
 
 # --- LÓGICA DE ATAQUE ---
@@ -104,31 +105,48 @@ func check_attack_range():
 			perform_attack(body)
 			return # Atacamos al primer jugador que encontramos y salimos
 
+
+
 func perform_attack(target_body):
 	if is_attacking or is_hurting: return
 	
 	is_attacking = true
-	# Detenemos al enemigo para que golpee quieto
 	velocity = Vector3.ZERO 
 	
 	# 1. Reproducir animación
-	animation_player.play("Lesha_attack_1", 0.1, 0.5)
+	animation_player.play("Lesha_attack_1", 0.1, 0.52)
 	
-	# 2. Aplicar daño (Lo hacemos justo al iniciar o podrías usar un Call Method Track en la animación)
-	target_body.take_damage(damage)
+	# Espera al momento exacto del impacto
+	await get_tree().create_timer(0.7).timeout
+	
+	# --- COMPROBACIÓN DE DISTANCIA ---
+	if target_body != null:
+		var distancia = global_position.distance_to(target_body.global_position)
+		
+		# Solo hacemos daño si sigue estando cerca (ajusta el 2.5 si es necesario)
+		if distancia <= 1.5:
+			# Check de seguridad: si nos pegaron durante la espera, cancelamos
+			if is_hurting:
+				is_attacking = false 
+				return 
+			
+			target_body.take_damage(damage)
 	
 	# 3. Iniciar el Timer de cooldown
 	timer.start()
 	
-	# 4. Esperar a que termine la animación para volver a caminar
+	# 4. Esperar a que termine el resto de la animación
 	await animation_player.animation_finished
+	
+	# Liberamos al enemigo para que se mueva de nuevo
 	is_attacking = false
-	# Volvemos a Idle momentáneamente hasta el siguiente frame de física
-	animation_player.play("Lesha_idle", 0.2) 
+	animation_player.play("Lesha_idle", 0.2, 0.6)
+
 
 
 func _target_position(target):
 	navigation_agent_3d.target_position = target.global_transform.origin
+
 
 
 # --- LÓGICA DE RECIBIR DAÑO ---
@@ -141,13 +159,15 @@ func apply_damage(amount: int) -> void:
 		# Reproducir animación de impacto (Hitted)
 		play_hurt_animation()
 
+
+
 func play_hurt_animation():
 	# La animación de dolor interrumpe todo, incluso un ataque
 	is_hurting = true
 	is_attacking = false # Cancelamos ataque si estaba ocurriendo
 	
 	animation_player.stop() # Detener lo que estuviera haciendo
-	animation_player.play("Lesha_hitted_1", 0.1, 0.2)
+	animation_player.play("Lesha_hitted_1", 0.1, 0.25)
 	
 	# Esperar a que termine
 	await animation_player.animation_finished
@@ -155,10 +175,13 @@ func play_hurt_animation():
 	animation_player.play("Lesha_idle", 0.2)
 
 
+
 func die() -> void:
 	# Opcional: Podrías poner una animación de muerte aquí antes del queue_free
 	_try_drop_ammo()
 	queue_free()
+	
+	
 	
 func _try_drop_ammo() -> void:
 	if ammo_drop_scene == null: return
@@ -177,6 +200,8 @@ func _try_drop_ammo() -> void:
 		pickup.set_ammo_amount(amount)
 	elif "ammo_amount" in pickup:
 		pickup.ammo_amount = amount
+
+
 
 func _on_timer_timeout() -> void:
 	# El timer solo controla el cooldown del daño, no necesitamos lógica extra aquí

@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://bs2fue8r4bw2j"]
+[gd_scene load_steps=11 format=3 uid="uid://bs2fue8r4bw2j"]
 
 [ext_resource type="Script" uid="uid://dovwfyq7qbh5l" path="res://Scripts/EnemyBoss.gd" id="1_x0a3p"]
 [ext_resource type="PackedScene" uid="uid://bcru5pxtsf8pw" path="res://Scenes/loot/AmmoPickup.tscn" id="2_bapqv"]
 [ext_resource type="PackedScene" uid="uid://cs1wnyv81o1at" path="res://Assets/Big_boss/scourger_rig.glb" id="3_bapqv"]
+[ext_resource type="Script" uid="uid://dd7ls72c8n3wq" path="res://Scripts/hitbox_head.gd" id="4_d5ak1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7fd37"]
 albedo_color = Color(1, 0, 0, 1)
@@ -14,16 +15,15 @@ radius = 0.34765625
 height = 1.6646118
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wovta"]
-radius = 1.1469727
+radius = 1.059082
 height = 4.585785
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d5ak1"]
-radius = 1.2631836
-height = 5.1679688
-
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bmcs3"]
-radius = 0.70703125
-height = 2.421875
+radius = 6.6210938
+height = 26.757248
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_bapqv"]
+radius = 5.868814
 
 [node name="EnemyBoss" type="CharacterBody3D" groups=["Enemy"]]
 script = ExtResource("1_x0a3p")
@@ -253,15 +253,26 @@ transform = Transform3D(0.9929423, -0.0983015, -0.06634805, 0.0018976001, 0.5725
 [node name="Hand_R_133" parent="Boss/Sketchfab_model/root/GLTF_SceneRootNode/Scourger Armature_173/GLTF_created_0/Skeleton3D" index="1"]
 transform = Transform3D(0.27597192, -0.3621202, -0.89034146, -0.21845675, -0.9257026, 0.30879006, -0.93601006, 0.10928404, -0.33457544, -18.09047, 24.13786, -3.741222)
 
-[node name="Area3D" type="Area3D" parent="."]
+[node name="BoneAttachment3D2" type="BoneAttachment3D" parent="Boss/Sketchfab_model/root/GLTF_SceneRootNode/Scourger Armature_173/GLTF_created_0/Skeleton3D" index="7"]
+transform = Transform3D(0.9537927, 0.14985427, 0.26042578, 0.2914389, -0.25058576, -0.9231845, -0.07308426, 0.95642596, -0.28268084, -2.0822158, 42.12207, 20.097044)
+bone_name = "Head_153"
+bone_idx = 143
 
-[node name="Body" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5839844, 0)
-shape = SubResource("CapsuleShape3D_d5ak1")
+[node name="Hitbox_Head" type="StaticBody3D" parent="Boss/Sketchfab_model/root/GLTF_SceneRootNode/Scourger Armature_173/GLTF_created_0/Skeleton3D/BoneAttachment3D2" node_paths=PackedStringArray("main_enemy") groups=["head"]]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("4_d5ak1")
+main_enemy = NodePath("../../../../../../../../..")
 
-[node name="Head" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1, 0, 0, 0, 0.39815688, -0.91731733, 0, 0.91731733, 0.39815688, 0, 3.279605, -1.2592785)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boss/Sketchfab_model/root/GLTF_SceneRootNode/Scourger Armature_173/GLTF_created_0/Skeleton3D/BoneAttachment3D2/Hitbox_Head"]
+transform = Transform3D(0.998143, -0.049612395, 0.035350196, 0.055493295, 0.9798943, -0.19167027, -0.025130125, 0.19327444, 0.9808259, 0.14891338, -0.54458046, 0.53012085)
 shape = SubResource("CapsuleShape3D_bmcs3")
+
+[node name="AttackRange" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AttackRange"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.295166, 0)
+shape = SubResource("SphereShape3D_bapqv")
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 

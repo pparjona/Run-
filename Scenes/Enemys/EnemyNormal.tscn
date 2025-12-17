@@ -1,15 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://frklwbf6lxbx"]
+[gd_scene load_steps=8 format=3 uid="uid://frklwbf6lxbx"]
 
 [ext_resource type="Script" uid="uid://cp0rji4qxdygc" path="res://Scripts/EnemyNormal.gd" id="1_dc3hb"]
 [ext_resource type="PackedScene" uid="uid://bcru5pxtsf8pw" path="res://Scenes/loot/AmmoPickup.tscn" id="2_ixcf5"]
 [ext_resource type="PackedScene" uid="uid://dr1jtktcrcxls" path="res://Assets/Enemy/enemyNormal.glb" id="3_ixcf5"]
+[ext_resource type="Script" uid="uid://6o1v76nrpujj" path="res://Scripts/hit_box_head.gd" id="4_8hn2j"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ixcf5"]
 radius = 0.4194336
 height = 2.69812
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8hn2j"]
-height = 2.7973633
+[sub_resource type="SphereShape3D" id="SphereShape3D_8hn2j"]
+radius = 1.5438639
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ixcf5"]
+radius = 2.688817
 
 [node name="EnemyNormal" type="CharacterBody3D" groups=["Enemy"]]
 script = ExtResource("1_dc3hb")
@@ -21,11 +25,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2802076, 0)
 shape = SubResource("CapsuleShape3D_ixcf5")
 
 [node name="Area3D" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5342063, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36695004, 0)
-shape = SubResource("CapsuleShape3D_8hn2j")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5479026, 0)
+shape = SubResource("SphereShape3D_8hn2j")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
@@ -105,6 +108,21 @@ transform = Transform3D(1, 2.0663992e-05, 4.367004e-06, -1.9269171e-05, 0.977287
 
 [node name="Bone_015_R_001_42" parent="Lesha_enemy/Sketchfab_model/root/GLTF_SceneRootNode/Lesha - Skelet - armature_64/GLTF_created_0/Skeleton3D" index="1"]
 transform = Transform3D(0.96576, 0.06757073, 0.2504844, 0.229767, -0.6711259, -0.70483947, 0.120480075, 0.7382584, -0.66367185, -2.6251423, 11.134012, -4.795406)
+
+[node name="BoneAttachment3D2" type="BoneAttachment3D" parent="Lesha_enemy/Sketchfab_model/root/GLTF_SceneRootNode/Lesha - Skelet - armature_64/GLTF_created_0/Skeleton3D" index="7"]
+transform = Transform3D(1, 8.615053e-06, -1.8856044e-05, -1.8966419e-05, 0.012998164, -0.9999159, -8.36923e-06, 0.99991584, 0.0129984915, 0.00017412708, 19.682236, -1.1331546)
+bone_name = "Bone.005_3"
+bone_idx = 6
+
+[node name="HitBox_Head" type="StaticBody3D" parent="Lesha_enemy/Sketchfab_model/root/GLTF_SceneRootNode/Lesha - Skelet - armature_64/GLTF_created_0/Skeleton3D/BoneAttachment3D2" node_paths=PackedStringArray("main_enemy") groups=["head"]]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("4_8hn2j")
+main_enemy = NodePath("../../../../../../../../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Lesha_enemy/Sketchfab_model/root/GLTF_SceneRootNode/Lesha - Skelet - armature_64/GLTF_created_0/Skeleton3D/BoneAttachment3D2/HitBox_Head"]
+transform = Transform3D(1, 4.5474735e-12, 5.087486e-12, 0, 1, 0, -2.9842795e-12, 0, 1, -3.3403106e-05, 1.7440033, -0.9666519)
+shape = SubResource("SphereShape3D_ixcf5")
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 

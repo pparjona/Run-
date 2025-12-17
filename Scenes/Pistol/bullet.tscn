@@ -7,6 +7,8 @@
 radius = 0.059393063
 
 [node name="Bullet" type="CharacterBody3D"]
+collision_layer = 3
+collision_mask = 3
 script = ExtResource("1_xjght")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
