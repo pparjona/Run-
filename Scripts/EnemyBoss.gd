@@ -2,7 +2,7 @@ extends CharacterBody3D
 
 @export var move_speed: float = 1.7
 @export var turn_speed: float = 8.0
-@export var max_health: int = 1500
+@export var max_health: int = 2100
 @export var damage: float = 30
 
 # --- CONFIGURACIÓN DEL LOOT (MUNICIÓN) ---
