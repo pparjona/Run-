@@ -2,6 +2,7 @@ extends CanvasLayer
 
 @onready var health_bar: ProgressBar = $LeftContainer/VBoxContainer/HealthBar
 @onready var ammo_value: Label = $RightContainer/AmmoRow/AmmoValue
+@onready var pickup_label: Label = $Pickup_label
 
 var _has_gun: bool = false
 
@@ -9,6 +10,7 @@ func _ready() -> void:
 	health_bar.min_value = 0
 	ammo_value.text = "--"
 	ammo_value.visible = false  # oculto al inicio
+	_on_pickup_signal("")
 
 	# Registrarse en el GameManager
 	GameManager.register_hud(self)
@@ -27,7 +29,12 @@ func set_has_gun(has_gun: bool) -> void:
 	else:
 		ammo_value.visible = false  # ocultamos la munición
 		ammo_value.text = "--"
-
+func _on_pickup_signal(text: String) -> void:
+	if text != "":
+		pickup_label.visible = true
+		pickup_label.text = text
+	else:
+		pickup_label.visible = false
 
 func update_ammo(current_clip: int, reserve: int) -> void:
 	# Si aún no tienes arma, ignoramos la actualización

@@ -85,7 +85,9 @@ var current_ammo_in_clip: int = 0           # balas actuales en el cargador
 signal health_changed(current: int, max: int)
 signal player_died
 signal gun_equipped(has_gun: bool)
-signal ammo_changed(current_clip: int, reserve: int) 
+signal ammo_changed(current_clip: int, reserve: int)
+signal pickup_signal(pickup_text: String)
+
 
 # Carga las escenas. ¡¡ASEGÚRATE DE QUE ESTAS RUTAS SEAN CORRECTAS!!
 const BULLET_SCENE = preload("res://Scenes/Pistol/bullet.tscn")
@@ -363,6 +365,8 @@ func equip_gun(gun_pickup_object):
 	# Destruir el arma del suelo
 	gun_pickup_object.queue_free()
 	gun_pickup_in_range = null
+	pickup_signal.emit("")
+	
 	
 	# Crear la instancia del arma equipada
 	var equipped_gun = EQUIPPED_GUN_SCENE.instantiate()
@@ -537,6 +541,8 @@ func _on_pick_up_detector_area_entered(area: Area3D) -> void:
 	if area.is_in_group("GunPickup"):
 		gun_pickup_in_range = area
 		print("¡Puedes recoger un arma! (Presiona 'E')")
+		pickup_signal.emit("Pulsa 'E' para recoger un arma")
+		
 		return
 
 	# Munición: la recogemos automáticamente al pasar por encima

@@ -8,7 +8,7 @@ var state: GameState = GameState.MENU
 const MAIN_MENU_SCENE := "res://Scenes/UserInterface/MenuUi.tscn"
 const GAME_SCENE      := "res://Scenes/Game.tscn"
 const SETTINGS_SCENE  := "res://Scenes/UserInterface/Settings.tscn"
-const END_SCENE       := "res://Scenes/UserInterface/EndScreen.tscn"
+const END_SCENE       := "res://Scenes/UserInterface/WinScreen.tscn"
 const GAMEOVER_SCENE  := "res://Scenes/UserInterface/GameoverScreen.tscn"
 
 var menu_music_stream = preload("res://Sounds/Musica/musicaMenu2.mp3")
@@ -142,6 +142,7 @@ func _connect_player_to_hud() -> void:
 	player.health_changed.connect(hud.update_health)
 	player.gun_equipped.connect(hud.set_has_gun)
 	player.ammo_changed.connect(hud.update_ammo)
+	player.pickup_signal.connect(hud._on_pickup_signal)
 
 	# Estado inicial en el HUD
 	hud.update_health(player.health, player.max_health)
