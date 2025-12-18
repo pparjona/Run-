@@ -4,7 +4,7 @@
 
 [sub_resource type="Environment" id="Environment_hgc08"]
 ambient_light_source = 2
-ambient_light_color = Color(0.14044744, 0.14044747, 0.14044738, 1)
+ambient_light_color = Color(0.09803922, 0.09803922, 0.09803922, 1)
 
 [node name="Minimap" type="Control"]
 layout_mode = 3
