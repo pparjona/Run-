@@ -39,9 +39,6 @@ func _ready() -> void:
 	if GameManager.difficulty >= 2:
 		width += 16
 		height += 16
-	elif GameManager.difficulty <= 0:
-		width -= 16
-		height -= 16
 	# 1. Generamos los datos del laberinto
 	_init_grid()
 	_generate_maze()
