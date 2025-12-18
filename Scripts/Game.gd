@@ -5,7 +5,6 @@ extends Node3D
 @export var normal_enemy_scene: PackedScene        # Enemigo NORMAL para oleadas
 @export var exit_corridor_scene: PackedScene
 @export var gun_pickup_scene: PackedScene          # Pistola que aparece sobre el altar
-@export var pause_menu_scene: PackedScene
 
 @onready var maze: Maze = $Maze
 @onready var player: Node3D = $Player

@@ -4,56 +4,59 @@ extends CanvasLayer
 
 @onready var menu_ui: Control = $MenuUI
 
+# Referencia al nodo de desenfoque por si quisieras manipularlo, 
+# pero con la solución de capas no hace falta ocultarlo.
+@onready var blur_overlay: ColorRect = $BlurOverlay 
+
 var settings_instance: CanvasLayer = null
 
 func _ready() -> void:
-	# Importante: El menú de pausa debe procesarse cuando el juego está pausado
-	process_mode = Node.PROCESS_MODE_WHEN_PAUSED 
+	process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 
 func _on_resume_button_pressed() -> void:
-	# Delegamos la lógica al GameManager
 	GameManager.resume_game()
 
 func _on_quit_button_pressed() -> void:
 	get_tree().quit()
 
-# --- LÓGICA DE SETTINGS (Mantenemos tu lógica de "parcheo", es buena) ---
+# --- LÓGICA DE SETTINGS ---
 func _on_setting_button_pressed() -> void:
 	if settings_scene == null:
 		push_error("PauseMenu: settings_scene not assigned.")
 		return
 	if settings_instance != null:
-		return # Ya están abiertos
+		return 
 
-	menu_ui.visible = false # Ocultamos los botones de pausa
+	menu_ui.visible = false 
 
 	settings_instance = settings_scene.instantiate()
-	# Nos aseguramos que los settings también funcionen en pausa
-	settings_instance.process_mode = Node.PROCESS_MODE_WHEN_PAUSED 
-	add_child(settings_instance) # Lo añadimos como hijo de este CanvasLayer
+	settings_instance.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	
+	# --- SOLUCIÓN: ELEVAR LA CAPA ---
+	# Ponemos una capa alta (100) para asegurar que se dibuje ENCIMA 
+	# del desenfoque (que está en la capa 1 por defecto).
+	# Esto hace que los settings se vean nítidos sobre el fondo borroso.
+	settings_instance.layer = 100 
+	
+	add_child(settings_instance) 
 
 	await get_tree().process_frame
 	_patch_settings_for_pause(settings_instance)
 
 func _patch_settings_for_pause(s: CanvasLayer) -> void:
-	# Buscamos los nodos con seguridad
 	var box = s.get_node_or_null("MarginContainer/VBoxContainer")
 	if not box: return
 
-	# Ocultamos lo que no queremos ver en pausa
 	if box.has_node("DifficultyLabel"): box.get_node("DifficultyLabel").visible = false
 	if box.has_node("DifficultButton"): box.get_node("DifficultButton").visible = false
 	if box.has_node("HSeparator"): box.get_node("HSeparator").visible = false
 
-	# Cambiamos el comportamiento del botón Atrás
 	var back_btn: Button = box.get_node_or_null("BackButton")
 	if back_btn:
-		# Desconectamos la señal original que volvería al MenuUi.tscn
 		var old_connections = back_btn.pressed.get_connections()
 		for conn in old_connections:
 			back_btn.pressed.disconnect(conn["callable"])
 		
-		# Conectamos nuestra propia función
 		back_btn.pressed.connect(_on_pause_settings_back_pressed)
 
 func _on_pause_settings_back_pressed() -> void:
@@ -61,5 +64,4 @@ func _on_pause_settings_back_pressed() -> void:
 		settings_instance.queue_free()
 		settings_instance = null
 	
-	# Volvemos a mostrar el menú de pausa principal
 	menu_ui.visible = true

@@ -34,7 +34,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause"): # Asegúrate de tener la acción "pause" en el Mapa de Entradas (Project Settings)
+	if event.is_action_pressed("pause"):
 		if state == GameState.PLAYING:
 			pause_game()
 		elif state == GameState.PAUSED:
