@@ -16,7 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://crvoa13oq3rlh" path="res://Scenes/Maze/GroundTorch.tscn" id="12_wxwew"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3so38"]
-energy_multiplier = 0.07
+energy_multiplier = 0.06
 
 [sub_resource type="Sky" id="Sky_3so38"]
 sky_material = SubResource("ProceduralSkyMaterial_3so38")
