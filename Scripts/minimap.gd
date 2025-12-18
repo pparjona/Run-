@@ -3,7 +3,11 @@ extends Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	print("Minimap camera has entered scene tree")
+	print("Current difficulty is ", GameManager.difficulty)
+	if GameManager.difficulty >= 2:
+		self.get_parent().get_parent().visible = false # Replace with function body.
+		print("Hard difficulty selected disabling minimap")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
