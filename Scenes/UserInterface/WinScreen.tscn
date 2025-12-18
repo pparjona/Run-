@@ -1,14 +1,17 @@
-[gd_scene load_steps=9 format=3 uid="uid://bk0d0g4x12cm5"]
+[gd_scene load_steps=10 format=3 uid="uid://bk0d0g4x12cm5"]
 
 [ext_resource type="Script" uid="uid://0p4xbv8pdt5p" path="res://Scripts/WinScreen.gd" id="1_7kv7j"]
 [ext_resource type="Texture2D" uid="uid://bwcwvn4q72v7u" path="res://Textures/Backgrounds/finalBackground1.png" id="2_yu53u"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="3_mv0on"]
+[ext_resource type="FontFile" uid="uid://do26357pp65jx" path="res://Textures/Fonts/who asks satan.ttf" id="3_o5djb"]
 [ext_resource type="Texture2D" uid="uid://broeg4x821sqx" path="res://Textures/MenuBottonTextures/texturamenuboton.png" id="4_o5djb"]
 [ext_resource type="AudioStream" uid="uid://cuhxtmub6eenq" path="res://Sounds/Musica/WinSong.mp3" id="4_yu53u"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_jrx8a"]
-font = ExtResource("3_mv0on")
-font_size = 80
+font = ExtResource("3_o5djb")
+font_size = 140
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_vst4l"]
 texture = ExtResource("4_o5djb")
@@ -39,17 +42,14 @@ texture = ExtResource("2_yu53u")
 expand_mode = 1
 
 [node name="Label" type="Label" parent="."]
-anchors_preset = 8
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -472.0
-offset_top = -156.0
-offset_right = 471.0
-offset_bottom = -64.0
+offset_left = -424.0
+offset_top = 128.0
+offset_right = 447.0
+offset_bottom = 256.0
 grow_horizontal = 2
-grow_vertical = 2
 size_flags_horizontal = 4
 text = "You finish the game"
 label_settings = SubResource("LabelSettings_jrx8a")

@@ -1,14 +1,17 @@
-[gd_scene load_steps=9 format=3 uid="uid://cn8u2pqgf1erq"]
+[gd_scene load_steps=10 format=3 uid="uid://cn8u2pqgf1erq"]
 
 [ext_resource type="Script" uid="uid://cy1cq733gyu2s" path="res://Scripts/GameOverScreen.gd" id="1_fvuy1"]
 [ext_resource type="Texture2D" uid="uid://bwcwvn4q72v7u" path="res://Textures/Backgrounds/finalBackground1.png" id="1_m74t5"]
 [ext_resource type="FontFile" uid="uid://b563rqedfhe7w" path="res://Textures/Fonts/HelpMe.ttf" id="2_fvuy1"]
+[ext_resource type="FontFile" uid="uid://do26357pp65jx" path="res://Textures/Fonts/who asks satan.ttf" id="3_dootr"]
 [ext_resource type="AudioStream" uid="uid://bvqmbwvhnbl5i" path="res://Sounds/Musica/EndGame.mp3" id="4_2alsc"]
 [ext_resource type="Texture2D" uid="uid://broeg4x821sqx" path="res://Textures/MenuBottonTextures/texturamenuboton.png" id="4_pxdo6"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_pxdo6"]
-font = ExtResource("2_fvuy1")
-font_size = 80
+font = ExtResource("3_dootr")
+font_size = 140
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2alsc"]
 texture = ExtResource("4_pxdo6")
@@ -39,17 +42,14 @@ texture = ExtResource("1_m74t5")
 expand_mode = 1
 
 [node name="Label" type="Label" parent="."]
-anchors_preset = 8
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -242.0
-offset_top = -156.0
-offset_right = 242.0
-offset_bottom = -64.0
+offset_left = -224.0
+offset_top = 128.0
+offset_right = 232.0
+offset_bottom = 256.0
 grow_horizontal = 2
-grow_vertical = 2
 size_flags_horizontal = 4
 text = "Game over"
 label_settings = SubResource("LabelSettings_pxdo6")

@@ -8,7 +8,7 @@
 
 [sub_resource type="LabelSettings" id="LabelSettings_mjqtt"]
 font = ExtResource("3_w1nw0")
-font_size = 70
+font_size = 140
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
@@ -53,6 +53,20 @@ grow_vertical = 2
 texture = ExtResource("2_w1nw0")
 expand_mode = 1
 
+[node name="SettingsLabel" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -184.0
+offset_top = 56.0
+offset_right = 189.0
+offset_bottom = 244.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+text = "Settings:"
+label_settings = SubResource("LabelSettings_mjqtt")
+horizontal_alignment = 1
+
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
@@ -66,13 +80,6 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 8
 alignment = 1
-
-[node name="SettingsLabel" type="Label" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "Settings:"
-label_settings = SubResource("LabelSettings_mjqtt")
-horizontal_alignment = 1
 
 [node name="VolumeLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
