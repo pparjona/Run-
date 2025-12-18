@@ -4,6 +4,7 @@ extends CharacterBody3D
 @export var turn_speed: float = 8.0
 @export var max_health: int = 2100
 @export var damage: float = 30
+@export var hit_range: float = 6.0
 
 # --- CONFIGURACIÓN DEL LOOT (MUNICIÓN) ---
 @export var ammo_drop_scene: PackedScene
@@ -108,12 +109,12 @@ func perform_attack(target_body):
 	
 	if attack_type == 0:
 		# ATAQUE 1 (Ej: Golpe Fuerte)
-		animation_player.play("Plunge Attack", 0.2) # Pon el nombre real aquí
-		impact_time = 1.2 # Ajusta el tiempo de impacto de ESTE ataque
+		animation_player.play("Plunge Attack", 0.2)
+		impact_time = 2.0 # Ajusta el tiempo de impacto de ESTE ataque
 	else:
 		# ATAQUE 2 (Ej: Golpe Rápido)
-		animation_player.play("Rear Attack", 0.2) # Pon el nombre real aquí
-		impact_time = 0.8 # Este ataque podría ser más rápido
+		animation_player.play("Rear Attack", 0.2)
+		impact_time = 1.2 # Este ataque podría ser más rápido
 	
 	# Esperamos el tiempo definido arriba
 	await get_tree().create_timer(impact_time).timeout
@@ -123,7 +124,7 @@ func perform_attack(target_body):
 		var distancia = global_position.distance_to(target_body.global_position)
 		
 		# Aumenta un poco el rango para el Boss si es muy grande
-		if distancia <= 5.0:
+		if distancia <= hit_range:
 			if is_hurting:
 				is_attacking = false 
 				return 

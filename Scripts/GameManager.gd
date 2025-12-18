@@ -51,9 +51,23 @@ func _change_scene(path: String, new_state: GameState) -> void:
 
 
 func goto_menu() -> void:
+	get_tree().paused = false
 	_play_music(menu_music_stream)
 	_change_scene(MAIN_MENU_SCENE, GameState.MENU)
 
+func return_to_menu_from_pause() -> void:
+	# 1.Reanudar el tiempo del juego.
+	get_tree().paused = false
+	
+	# 2. Limpiar la referencia del menú de pausa
+	if pause_menu_instance != null:
+		pause_menu_instance = null
+	
+	# 3. Asegurar que el ratón sea visible para el menú
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	
+	# 4. Ir al menú principal
+	goto_menu()
 
 func start_game() -> void:
 	_play_music(game_music_stream)

@@ -4,8 +4,6 @@ extends CanvasLayer
 
 @onready var menu_ui: Control = $MenuUI
 
-# Referencia al nodo de desenfoque por si quisieras manipularlo, 
-# pero con la solución de capas no hace falta ocultarlo.
 @onready var blur_overlay: ColorRect = $BlurOverlay 
 
 var settings_instance: CanvasLayer = null
@@ -17,7 +15,7 @@ func _on_resume_button_pressed() -> void:
 	GameManager.resume_game()
 
 func _on_quit_button_pressed() -> void:
-	get_tree().quit()
+	GameManager.return_to_menu_from_pause()
 
 # --- LÓGICA DE SETTINGS ---
 func _on_setting_button_pressed() -> void:
@@ -32,10 +30,6 @@ func _on_setting_button_pressed() -> void:
 	settings_instance = settings_scene.instantiate()
 	settings_instance.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
 	
-	# --- SOLUCIÓN: ELEVAR LA CAPA ---
-	# Ponemos una capa alta (100) para asegurar que se dibuje ENCIMA 
-	# del desenfoque (que está en la capa 1 por defecto).
-	# Esto hace que los settings se vean nítidos sobre el fondo borroso.
 	settings_instance.layer = 100 
 	
 	add_child(settings_instance) 
