@@ -63,23 +63,35 @@ func _ready() -> void:
 			enemy_manager.all_waves_cleared.connect(_on_all_waves_cleared)
 
 	# 5) Instanciar el BOSS inicial en la esquina opuesta (celda de salida interna)
-	_spawn_boss_at_opposite_corner()
+	_spawn_boss()
 
-func _spawn_boss_at_opposite_corner() -> void:
+func _spawn_boss() -> void:
 	if boss_scene == null:
 		return
-
-	var boss := boss_scene.instantiate()
-	add_child(boss)
-
-	# La esquina opuesta ya la estás usando como exit_cell,
-	# así que reutilizamos la posición interna de salida
-	var boss_start: Vector3 = maze.get_exit_position(2.0)
-	boss.global_position = boss_start
-
+		
+	for boss_count in range(GameManager.difficulty + 1):
+		var boss := boss_scene.instantiate()
+		add_child(boss)
+		
+			# La esquina opuesta ya la estás usando como exit_cell,
+		# así que reutilizamos la posición interna de salida
+		var boss_start: Vector3
+		if boss_count == 0:
+			boss_start= maze.get_exit_position(2.0)
+			
+		elif boss_count == 1: 
+			boss_start = maze.get_bottom_right_corner(2.0)
+			
+		else:
+			boss_start = maze.get_top_right_corner(2.0)
+			
+		boss.global_position = boss_start
 	# Pasar referencias de Player y Maze al boss
-	if boss.has_method("set_target_and_maze"):
-		boss.set_target_and_maze(player, maze)
+		if boss.has_method("set_target_and_maze"):
+			boss.set_target_and_maze(player, maze)
+
+
+
 
 
 func _on_player_entered_plaza() -> void:

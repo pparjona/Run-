@@ -215,10 +215,16 @@ func get_exit_position(height_offset: float = 2.0) -> Vector3:
 func get_center_altar_position(height_offset: float = 0.0) -> Vector3:
 	return cell_to_world(center_cell, height_offset)
 
-func get_exit_corridor_origin(height_offset: float = 0.0) -> Vector3:
+func get_exit_corridor_origin(height_offset: float = 2.0) -> Vector3:
 	var wx: float = float(width) * cell_size
 	var wz: float = float(exit_cell.y) * cell_size
 	return Vector3(wx, height_offset, wz)
+	
+func get_bottom_right_corner(height_offset: float = 0.0) -> Vector3:
+	return cell_to_world(Vector2i(1, height - 2), height_offset)
+	
+func get_top_right_corner(height_offset: float = 0.0) -> Vector3:
+	return cell_to_world(Vector2i(width -2, 1), height_offset)
 
 
 func get_random_walkable_world_position(height_offset: float = 0.0, exclude_start: bool = true, exclude_exit: bool = true, exclude_center: bool = false) -> Vector3:
