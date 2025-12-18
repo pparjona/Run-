@@ -22,6 +22,12 @@ signal all_waves_cleared
 
 func _ready() -> void:
 	print("EnemyManager READY. maze =", maze, "player =", player, "enemy_scene =", enemy_scene)
+	if GameManager.difficulty >= 2:
+		total_waves += 2
+		enemies_per_wave *= 2
+	elif GameManager.difficulty <= 0:
+		total_waves -= 2
+		enemies_per_wave /= 2
 
 func start_waves() -> void:
 	if _waves_started:
